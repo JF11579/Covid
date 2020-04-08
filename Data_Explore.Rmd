@@ -1,0 +1,124 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+#Resources
+
+#Plans
+convert to date type
+make data skinny.
+mutate import county pop
+get per capita infection and death rates.
+get population density per sq mile.
+merge demographics : age, do all counties have same male/female ratio?  income
+
+```{r}
+#PACKAGES
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+```
+
+```{r}
+getwd()
+```
+
+```{r}
+NYS_Covid_Data <- read_csv("NYS_Statewide_COVID-19_Testing.csv")
+```
+
+```{r}
+head(NYS_Covid_Data,3)
+```
+
+```{r}
+dim(NYS_Covid_Data)
+```
+
+
+```{r}
+str(NYS_Covid_Data)
+```
+
+```{r}
+#convert Test Date from character to date type
+NYS_Covid_Data$Test_Date <- as.Date(NYS_Covid_Data$Test_Date , format= "%m/%d/%Y")
+
+```
+
+```{r}
+head(NYS_Covid_Data)
+```
+
+Add population data from the Census
+```{r}
+county_pop <- read_csv("NY_counties.csv")
+```
+
+
+```{r}
+dim(county_pop)
+```
+
+Since there is only a single row we are intersted in let us filter this down.
+Each county has many rows, age groups , but  AGEGRP = 0 is
+the total population for that county
+```{r}
+pop <- county_pop%>%
+          filter(AGEGRP==0) %>%
+              select(c(CTYNAME, TOT_POP, AGEGRP))
+```
+
+```{r}
+head(pop)
+```
+```{r}
+dim(pop)
+```
+
+```{r}
+head(pop,10)
+```
+
+```{r}
+pop <- pop%>%
+          group_by(CTYNAME)%>%
+            top_n(n=1 ,wt=TOT_POP)
+```
+
+
+```{r}
+head(pop)
+```
+
+```{r}
+set.seed(1)
+df <- expand.grid(list(A = 1:5, B = 1:5, C = 1:5))
+df$value <- runif(nrow(df))
+```
+
+
+```{r}
+df
+```
+
+```{r}
+df %>% group_by(A,B) %>% slice(which.max(value))
+```
+
+
