@@ -117,15 +117,16 @@ pop <- pop %>%
 head(pop,3)
 ```
 
-Next remove the word COUNTY from the name of each county
+Next remove the word COUNTY from the name of each county.
+use SEPARATE
 ```{r}
-pop1<- pop%>%
-          separate(County, c("Albany", NA))       #df %>% separate(x, c("a", NA))
+pop<- pop%>%
+          separate(County, c("County", NA))       #df %>% separate(x, c("a", NA))
 ```
 
 
 ```{r}
-head(pop1)   
+head(pop)   
 ```
 
 ```{r}
@@ -142,17 +143,50 @@ pop_and_count <- full_join(NYS_Covid_Data,pop, by ="County")
 View(pop_and_count)
 ```
 
-SEPERATE
+
+Lets add teh dasys of the week to our Df
 ```{r}
-df <- data.frame(x = c(NA, "a.b", "a.d", "b.c"))
+pop_and_count<- pop_and_count %>%
+mutate(day_week = wday(Test_Date,label = TRUE))
+```
+
+Now let us look at every Monday
+```{r}
+pop_and_count<-filter(pop_and_count, day_week == "Mon")
+```
+
+
+```{r}
+View(pop_and_count)
+```
+
+########3
+
+
+
+```{r}
+pop1<- pop1 %>%
+mutate(day_week = wday(Test_Date,label = TRUE))
 ```
 
 ```{r}
-df
+View(pop1)
 ```
 
 ```{r}
-df %>% separate(x, c("a", NA))
+pop2<-filter(pop1, day_week == "Mon")
 ```
+
+```{r}
+View(pop2)
+```
+
+
+
+
+
+
+
+
 
 
