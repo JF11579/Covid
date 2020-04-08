@@ -106,19 +106,53 @@ pop <- pop%>%
 head(pop)
 ```
 
+Make col names uniform
+new col anme = exisitng col name
 ```{r}
-set.seed(1)
-df <- expand.grid(list(A = 1:5, B = 1:5, C = 1:5))
-df$value <- runif(nrow(df))
+pop <- pop %>% 
+          rename(County = CTYNAME)
+``` 
+
+```{r}
+head(pop,3)
 ```
 
+Next remove the word COUNTY from the name of each county
+```{r}
+pop1<- pop%>%
+          separate(County, c("Albany", NA))       #df %>% separate(x, c("a", NA))
+```
+
+
+```{r}
+head(pop1)   
+```
+
+```{r}
+head(NYS_Covid_Data)
+```
+
+
+Next join the two datasets on the county name.
+```{r}
+pop_and_count <- full_join(NYS_Covid_Data,pop, by ="County")
+```
+
+```{r}
+View(pop_and_count)
+```
+
+SEPERATE
+```{r}
+df <- data.frame(x = c(NA, "a.b", "a.d", "b.c"))
+```
 
 ```{r}
 df
 ```
 
 ```{r}
-df %>% group_by(A,B) %>% slice(which.max(value))
+df %>% separate(x, c("a", NA))
 ```
 
 
