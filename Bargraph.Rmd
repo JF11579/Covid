@@ -26,3 +26,47 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+```{r}
+p_and_c<- read_csv("Pop_And_Count.csv")
+```
+
+
+
+Lets add the days of the week to our Df
+```{r}
+p_and_c<- p_and_c %>%
+mutate(day_week = wday(Test_Date,label = TRUE))
+```
+
+Now let us look at every Monday
+```{r}
+p_and_c<-filter(p_and_c, day_week == "Mon")
+```
+
+
+```{r}
+View(p_and_c)
+```
+
+```{r}
+B1<- ggplot(p_and_c,aes(x=p_and_c$County, y= p_and_c$Cumulative_Number_of_Positives))+
+      geom_bar(stat = "identity")+
+  coord
+B1
+```
+
+```{r}
+L1<- ggplot(p_and_c, aes(x=p_and_c$County  ,y=p_and_c$Cumulative_Number_of_Positives))+
+      geom_line()+coord_flip()
+L1
+```
+
+
+```{r figl, fig.height=5, fig.width=4}
+L2<- ggplot(p_and_c, aes(x=p_and_c$County  ,y=p_and_c$Cumulative_Number_of_Positives))+
+      geom_line()+coord_flip()
+L2
+```
+
