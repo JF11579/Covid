@@ -46,6 +46,11 @@ NYS_Covid_Data <- read_csv("NYS_Statewide_COVID-19_Testing.csv")
 head(NYS_Covid_Data,3)
 ```
 
+
+```{r}
+View(NYS_Covid_Data)
+```
+
 ```{r}
 dim(NYS_Covid_Data)
 ```
@@ -143,8 +148,14 @@ pop_and_count <- full_join(NYS_Covid_Data,pop, by ="County")
 View(pop_and_count)
 ```
 
+```{r}
+write_csv(pop_and_count,"Pop_And_Count.csv")
+```
 
-Lets add teh dasys of the week to our Df
+
+######################3
+
+Lets add the days of the week to our Df
 ```{r}
 pop_and_count<- pop_and_count %>%
 mutate(day_week = wday(Test_Date,label = TRUE))
@@ -181,6 +192,35 @@ pop2<-filter(pop1, day_week == "Mon")
 View(pop2)
 ```
 
+#Next we will import 3 census tables:
+#Race & Hispanics to get ethnicity and Income to our Covide data.
+
+#RACE
+```{r}
+Race<- read_csv("Race.csv")
+```
+
+```{r}
+View(Race)
+```
+
+###Hispanics
+```{r}
+Hispanic_Age_NYS<- read_csv("Hispanic_Age_NYS.csv")
+```
+
+```{r}
+View(Hispanic_Age_NYS)
+```
+
+#INCOME
+```{r}
+NYS_Income <- read_csv("Income_NYS.csv")
+```
+
+```{r}
+View(NYS_Income)
+```
 
 
 

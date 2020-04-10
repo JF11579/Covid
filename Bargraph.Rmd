@@ -53,8 +53,17 @@ View(p_and_c)
 ```{r}
 B1<- ggplot(p_and_c,aes(x=p_and_c$County, y= p_and_c$Cumulative_Number_of_Positives))+
       geom_bar(stat = "identity")+
-  coord
+  coord_flip()+
+  ggtitle("Unadjusted #s for Each county As of April 8,2020")
 B1
+```
+
+
+
+
+```{r  figl, fig.height=5, fig.width=4}
+
+
 ```
 
 ```{r}
@@ -66,7 +75,7 @@ L1
 
 ```{r figl, fig.height=5, fig.width=4}
 L2<- ggplot(p_and_c, aes(x=p_and_c$County  ,y=p_and_c$Cumulative_Number_of_Positives))+
-      geom_line()+coord_flip()
+      geom_line(aes(width=1))+coord_flip()
 L2
 ```
 
