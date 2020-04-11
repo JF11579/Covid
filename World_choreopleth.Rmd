@@ -1,0 +1,25 @@
+---
+title: "Corona_Countries_Pop_Adj"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+options(scipen = 999)
+```
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(gsheet)
+```
+
+```{r}
+country_pop<- read_csv("country_pop.csv")
+```
+
+
+

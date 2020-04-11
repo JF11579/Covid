@@ -168,8 +168,27 @@ b3
 
 
 
+```{r}
+head(NYS_Covid_Data,3)
+```
 
 
+b1<- ggplot(data = ethnicities_long_2, aes(x= County , y = number)) +
+        geom_col(aes(fill= race) ,width = 0.7) +
+            #geom_text(aes(y=pct, label = number, group=County) , color="black")+
+            coord_flip()+
+ggtitle("NYS County Pop")
+b1
+
+```{r  figl, fig.height=5, fig.width=4}
+c1<- ggplot(data = NYS_Covid_Data,aes(x= County , y = New_Positives)) +
+      geom_col(  width = 0.7) +
+  coord_flip()+
+  ggtitle(" Number of Confirmed Covid Cases as of April 9, 2020 ")+
+  theme_economist()
+
+c1
+```
 
 
 

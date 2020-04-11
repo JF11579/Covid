@@ -1,0 +1,231 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+
+'''
+NYC data by Zip  https://www1.nyc.gov/site/doh/covid/covid-19-data.page#download
+
+'''
+
+```{r}
+#PACKAGES
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+```
+
+```{r}
+getwd()
+```
+
+```{r}
+NYS_Covid_Data <- read_csv("NYS_Statewide_COVID-19_Testing.csv")
+```
+
+```{r}
+head(NYS_Covid_Data,3)
+```
+
+
+```{r}
+View(NYS_Covid_Data)
+```
+
+```{r}
+dim(NYS_Covid_Data)
+```
+
+
+```{r}
+str(NYS_Covid_Data)
+```
+
+```{r}
+#convert Test Date from character to date type
+NYS_Covid_Data$Test_Date <- as.Date(NYS_Covid_Data$Test_Date , format= "%m/%d/%Y")
+
+```
+
+```{r}
+head(NYS_Covid_Data)
+```
+
+Add population data from the Census
+```{r}
+county_pop <- read_csv("NY_counties.csv")
+```
+
+
+```{r}
+dim(county_pop)
+```
+
+Since there is only a single row we are intersted in let us filter this down.
+Each county has many rows, age groups , but  AGEGRP = 0 is
+the total population for that county
+```{r}
+pop <- county_pop%>%
+          filter(AGEGRP==0) %>%
+              select(c(CTYNAME, TOT_POP, AGEGRP))
+```
+
+```{r}
+head(pop)
+```
+```{r}
+dim(pop)
+```
+
+```{r}
+head(pop,10)
+```
+
+```{r}
+pop <- pop%>%
+          group_by(CTYNAME)%>%
+            top_n(n=1 ,wt=TOT_POP)
+```
+
+
+```{r}
+head(pop)
+```
+
+Make col names uniform
+new col anme = exisitng col name
+```{r}
+pop <- pop %>% 
+          rename(County = CTYNAME)
+``` 
+
+```{r}
+head(pop,3)
+```
+
+Next remove the word COUNTY from the name of each county.
+use SEPARATE
+```{r}
+pop<- pop%>%
+          separate(County, c("County", NA))       #df %>% separate(x, c("a", NA))
+```
+
+
+```{r}
+head(pop)   
+```
+
+```{r}
+head(NYS_Covid_Data)
+```
+
+
+Next join the two datasets on the county name.
+```{r}
+pop_and_count <- full_join(NYS_Covid_Data,pop, by ="County")
+```
+
+```{r}
+View(pop_and_count)
+```
+
+```{r}
+write_csv(pop_and_count,"Pop_And_Count.csv")
+```
+
+
+######################3
+
+Lets add the days of the week to our Df
+```{r}
+pop_and_count<- pop_and_count %>%
+mutate(day_week = wday(Test_Date,label = TRUE))
+```
+
+Now let us look at every Monday
+```{r}
+pop_and_count<-filter(pop_and_count, day_week == "Mon")
+```
+
+
+```{r}
+View(pop_and_count)
+```
+
+########3
+
+
+
+```{r}
+pop1<- pop1 %>%
+mutate(day_week = wday(Test_Date,label = TRUE))
+```
+
+```{r}
+View(pop1)
+```
+
+```{r}
+pop2<-filter(pop1, day_week == "Mon")
+```
+
+```{r}
+View(pop2)
+```
+
+#Next we will import 3 census tables:
+#Race & Hispanics to get ethnicity and Income to our Covide data.
+
+#RACE
+```{r}
+Race<- read_csv("Race.csv")
+```
+
+```{r}
+View(Race)
+```
+
+###Hispanics
+```{r}
+Hispanic_Age_NYS<- read_csv("Hispanic_Age_NYS.csv")
+```
+
+```{r}
+View(Hispanic_Age_NYS)
+```
+
+#INCOME
+```{r}
+NYS_Income <- read_csv("Income_NYS.csv")
+```
+
+```{r}
+View(NYS_Income)
+```
+
+### Next join all of the tables: Covid+Race+Hispanics+Income
+```{r}
+Race_Hispanics<- left_join(Race,Hispanic_Age_NYS,by="County")
+```
+
+```{r}
+Race_Hispanics_Income<- left_join(Race_Hispanics, Income_NYS, by = "County")
+```
+
+
+```{r}
+View(Race_Hispanics_Income)
+```
+
+```{r}
+#write_csv(Race_Hispanics_Income,"Race_Hispanics_Income.csv")
+```
+
+###Groan . the 
+
+
