@@ -222,11 +222,24 @@ NYS_Income <- read_csv("Income_NYS.csv")
 View(NYS_Income)
 ```
 
+### Next join all of the tables: Covid+Race+Hispanics+Income
+```{r}
+Race_Hispanics<- left_join(Race,Hispanic_Age_NYS,by="County")
+```
+
+```{r}
+Race_Hispanics_Income<- left_join(Race_Hispanics, Income_NYS, by = "County")
+```
 
 
+```{r}
+View(Race_Hispanics_Income)
+```
 
+```{r}
+#write_csv(Race_Hispanics_Income,"Race_Hispanics_Income.csv")
+```
 
-
-
+###Groan . the 
 
 

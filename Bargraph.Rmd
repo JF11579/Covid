@@ -6,26 +6,18 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+```{r}
+library(ggplot2)
+library(ggthemes)
+library(extrafont)
+library(tidyverse)
+library(scales)
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+options(scipen = 999)
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 
 ```{r}
@@ -50,7 +42,7 @@ p_and_c<-filter(p_and_c, day_week == "Mon")
 View(p_and_c)
 ```
 
-```{r}
+```{r figl, fig.height=5, fig.width=4}
 B1<- ggplot(p_and_c,aes(x=p_and_c$County, y= p_and_c$Cumulative_Number_of_Positives))+
       geom_bar(stat = "identity")+
   coord_flip()+
@@ -66,7 +58,7 @@ B1
 
 ```
 
-```{r}
+```{r figl, fig.height=5, fig.width=4}
 L1<- ggplot(p_and_c, aes(x=p_and_c$County  ,y=p_and_c$Cumulative_Number_of_Positives))+
       geom_line()+coord_flip()
 L1
@@ -78,4 +70,94 @@ L2<- ggplot(p_and_c, aes(x=p_and_c$County  ,y=p_and_c$Cumulative_Number_of_Posit
       geom_line(aes(width=1))+coord_flip()
 L2
 ```
+
+
+### We need to make the data skinny and out all of the ethnicities 
+### under one variable in order to create a stacked bar plot.
+### Convert COUNTY to a factor
+####http://www.cookbook-r.com/Manipulating_data/Converting_data_between_wide_and_long_format/
+```{r}
+ethnicities$County<- as.factor(ethnicities$County)
+```
+
+```{r}
+dim(ethnicities)
+```
+
+```{r}
+head(ethnicities,3)
+```
+
+```{r}
+ethnicities_long<- gather(ethnicities , race , number, White:All_others )
+```
+
+```{r}
+head(ethnicities_long)
+```
+
+```{r}
+dim(ethnicities_long)
+```
+
+
+###stacked bar  http://t-redactyl.io/blog/2016/01/creating-plots-in-r-using-ggplot2-part-4-stacked-bar-plots.html
+
+### We need  to mutate adn add a column for labels
+```{r}
+ethnicities_long_2 <- ethnicities_long%>%
+                      mutate(pct = number/Total)
+```
+
+```{r}
+head(ethnicities_long_2)
+```
+
+###Let us round that decimal
+```{r}
+ethnicities_long_2$pct <-  format(round(ethnicities_long_2$pct , 2) ,nsmall = 2 )
+```
+
+```{r}
+ethnicities_long_2$pct <- as.numeric(ethnicities_long_2$pct)
+```
+
+
+```{r}
+head(ethnicities_long_2,3)
+```
+
+```{r}
+str(ethnicities_long_2)
+```
+
+
+```{r  figl, fig.height=5, fig.width=4}
+b1<- ggplot(data = ethnicities_long_2, aes(x= County , y = number)) +
+        geom_col(aes(fill= race) ,width = 0.7) +
+            #geom_text(aes(y=pct, label = number, group=County) , color="black")+
+            coord_flip()+
+ggtitle("NYS County Pop")
+b1
+       
+```
+
+
+100% Stacked bar graph
+
+```{r  figl, fig.height=5, fig.width=4}
+b1<- ggplot(data = ethnicities_long_2, aes(x= County , y = number)) +
+        geom_col(aes(fill= race) ,width = 0.7) +
+            #geom_text(aes(y=pct, label = number, group=County) , color="black")+
+            coord_flip()+
+ggtitle("NYS County Pop")
+b1
+       
+```
+
+
+
+
+
+
 
