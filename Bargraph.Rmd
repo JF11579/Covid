@@ -146,14 +146,30 @@ b1
 100% Stacked bar graph
 
 ```{r  figl, fig.height=5, fig.width=4}
-b1<- ggplot(data = ethnicities_long_2, aes(x= County , y = number)) +
-        geom_col(aes(fill= race) ,width = 0.7) +
-            #geom_text(aes(y=pct, label = number, group=County) , color="black")+
-            coord_flip()+
-ggtitle("NYS County Pop")
-b1
-       
+b2<- ggplot()+
+      geom_bar(aes(y=pct , x= County, fill=race) , data = ethnicities_long_2, stat = "identity")+
+  coord_flip()
+b2
+
 ```
+
+
+#https://stackoverflow.com/questions/9563368/create-stacked-barplot-where-each-stack-is-scaled-to-sum-to-100
+
+
+```{r figl, fig.height=5, fig.width=4 }
+b3<- ggplot(ethnicities_long_2, aes( x= County, y= pct,fill= race))+
+      geom_bar(position = "fill", stat="identity")+
+      coord_flip()+
+      ggtitle("Look At How While NYS Is")+
+  theme_bw()
+b3
+```
+
+
+
+
+
 
 
 
