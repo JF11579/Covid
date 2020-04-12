@@ -157,7 +157,19 @@ map("europe")
 world<-map_data("world ")
 ```
 
+```{r}
+library("WHO")
+library("dplyr")
+```
 
+
+```{r}
+who
+```
+
+```{r}
+life.exp <- get_data("WHOSIS_000001")             # Retrieve the data
+```
 
 
 
