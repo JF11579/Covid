@@ -41,7 +41,174 @@ theme_set(
   )
 ```
 
+######## Monday, April 13,2020
+# https://www.datanovia.com/en/blog/how-to-create-a-map-using-ggplot2/
+* get world map data.
+* make a list of countries of interst
+* Subset world map data with western EU in our case.
+* Join our data to subsetted world data.
 
+```{r}
+world_map <- map_data("world")
+
+```
+
+
+```{r}
+
+ggplot(world_map, aes(x = long, y = lat, group = group)) +
+  geom_polygon(fill="lightgray", colour = "white")
+```
+
+#Make list of countries of interest
+```{r}
+# Some EU Contries
+some.eu.countries <- c(
+  "Portugal", "Spain", "France", "Switzerland", "Germany",
+  "Austria", "Belgium", "UK", "Netherlands",
+   "Italy", "luxembourg"
+)
+```
+
+#Next we filter world map data by our selection
+```{r}
+# Retrievethe map data
+some.eu.maps <- map_data("world", region = some.eu.countries)
+```
+
+#Now import our data
+```{r}
+data<- read_csv("country_pop_covid_deaths_3.csv")
+```
+```{r}
+head(data)
+```
+
+
+#Next we join our data to the map data 
+#But first we need to change covid col name from Country to "region"
+```{r}
+# rename( new name = existing name)
+data<- data %>% 
+                rename(region = Country)
+```
+
+```{r}
+data_2<- full_join(some.eu.maps ,data, by = "region")
+```
+
+```{r}
+View(data_2)
+```
+
+#Place labels
+```{r}
+# Compute the centroid as the mean longitude and lattitude
+# Used as label coordinate for country's names
+region.lab.data <- some.eu.maps %>%
+  group_by(region) %>%
+  summarise(long = mean(long), lat = mean(lat))
+```
+
+#Visualize
+
+
+
+
+
+# Data
+```{r}
+data<- read_csv("country_pop_covid_deaths_3.csv")
+```
+
+#We need to join our covid data to the map dataset.
+#First step rename covid "country" to region.
+
+```{r}
+# rename( new name = existing name)
+country_pop_covid_deaths_3<- country_pop_covid_deaths_3 %>% 
+                rename(region = Country)
+```
+
+
+```{r}
+head(some.eu.maps,3)
+```
+
+
+
+```{r}
+View(C)
+```
+
+
+```{r}
+# Some EU Contries
+some.eu.countries <- c(
+  "Portugal", "Spain", "France", "Switzerland", "Germany",
+  "Austria", "Belgium", "UK", "Netherlands",
+  "Denmark", "Poland", "Italy", 
+  "Croatia", "Slovenia", "Hungary", "Slovakia",
+  "Czech republic"
+)
+```
+
+
+
+```{r}
+# Retrievethe map data
+some.eu.maps <- map_data("world", region = some.eu.countries)
+```
+
+
+
+```{r}
+View(some.eu.maps)
+```
+
+```{r}
+dim(some.eu.maps)
+```
+
+
+
+```{r}
+# Compute the centroid as the mean longitude and lattitude
+# Used as label coordinate for country's names
+region.lab.data <- some.eu.maps %>%
+  group_by(region) %>%
+  summarise(long = mean(long), lat = mean(lat))
+```
+
+
+ggplot(some.eu.maps, aes(x = long, y = lat)) +
+  geom_polygon(aes( group = group, fill = region))+
+  geom_text(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5)+
+  scale_fill_viridis_d()+
+  theme_void()+
+  theme(legend.position = "none")
+```{r   figl, fig.height=2, fig.width=2}
+ggplot(some.eu.maps, aes(x = long, y = lat)) +
+  geom_polygon(aes( group = group, fill = region))+
+  geom_text(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5)+
+  scale_fill_viridis_d()+
+  theme_void()+
+  theme(legend.position = "none")
+```
+
+```{r}
+head(region.lab.data)
+```
+
+
+
+
+
+
+
+
+#########
+########
 ```{r}
 world_map <- map_data("world")
 ```
@@ -55,13 +222,7 @@ ggplot(world_map, aes(x = long, y = lat, group = group)) +
 
 
 # Some EU Contries
-some.eu.countries <- c(
-  "Portugal", "Spain", "France", "Switzerland", "Germany",
-  "Austria", "Belgium", "UK", "Netherlands",
-  "Denmark", "Poland", "Italy", 
-  "Croatia", "Slovenia", "Hungary", "Slovakia",
-  "Czech republic"
-)
+
 
 ```{r}
 # Some EU Contries
@@ -88,7 +249,7 @@ region.lab.data <- some.eu.maps %>%
 
 
 
-```{r}
+```{r   figl, fig.height=2, fig.width=2}
 ggplot(some.eu.maps, aes(x = long, y = lat)) +
   geom_polygon(aes( group = group, fill = region))+
   geom_text(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5)+
@@ -96,6 +257,8 @@ ggplot(some.eu.maps, aes(x = long, y = lat)) +
   theme_void()+
   theme(legend.position = "none")
 ```
+
+# another source of mapping to address the distortions # https://timogrossenbacher.ch/2016/12/beautiful-thematic-maps-with-ggplot2-only/
 
 #Make a choropleth Map
 #World map colored by life expectancy
@@ -170,6 +333,46 @@ who
 ```{r}
 life.exp <- get_data("WHOSIS_000001")             # Retrieve the data
 ```
+
+```{r}
+life.exp <- life.exp %>%
+  filter(year == 2015 & sex == "Both sexes") %>%  # Keep data for 2015 and for both sex
+  select(country, value) %>%                      # Select the two columns of interest
+  rename(region = country, lifeExp = value) %>%   # Rename columns
+  # Replace "United States of America" by USA in the region column
+  mutate(
+    region = ifelse(region == "United States of America", "USA", region)
+    )                
+```
+
+
+```{r}
+world_map <- map_data("world")
+```
+
+```{r}
+life.exp.map <- left_join(life.exp, world_map, by = "region")
+```
+
+```{r}
+ggplot(life.exp.map, aes(long, lat, group = group))+
+  geom_polygon(aes(fill = lifeExp ), color = "white")+
+  scale_fill_viridis_c(option = "C")
+```
+
+```{r}
+ggplot(life.exp.map, aes(map_id = region, fill = lifeExp))+
+  geom_map(map = life.exp.map,  color = "white", size=0.01)+
+  expand_limits(x = life.exp.map$long, y = life.exp.map$lat)+
+  scale_fill_viridis_c(option = "C")
+```
+
+
+
+
+
+
+
 
 
 
