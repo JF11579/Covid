@@ -72,16 +72,36 @@ some.eu.countries <- c(
 
 #Next we filter world map data by our selection
 ```{r}
-# Retrievethe map data
+# Retrieve the map data
 some.eu.maps <- map_data("world", region = some.eu.countries)
 ```
 
+```{r}
+# Compute the centroid as the mean longitude and lattitude
+# Used as label coordinate for country's names
+region.lab.data <- some.eu.maps %>%
+  group_by(region) %>%
+  summarise(long = mean(long), lat = mean(lat))
+```
+
+
+```{r}
+#plot given data
+ggplot(some.eu.maps, aes(x = long, y = lat)) +
+  geom_polygon(aes( group = group, fill = region))+
+  geom_text(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5)+
+  scale_fill_viridis_d()+
+  theme_void()+
+  theme(legend.position = "none")
+```
+
+#Works.  
 #Now import our data
 ```{r}
 data<- read_csv("country_pop_covid_deaths_3.csv")
 ```
 ```{r}
-head(data)
+head(data,2)
 ```
 
 
@@ -94,12 +114,51 @@ data<- data %>%
 ```
 
 ```{r}
-data_2<- full_join(some.eu.maps ,data, by = "region")
+head(data,2)
+```
+
+
+```{r}
+some.eu.maps<- full_join(some.eu.maps ,data, by = "region")
+```
+
+
+```{r}
+some.eu.maps$deaths_per_100k<- as.factor(some.eu.maps$deaths_per_100k)
+```
+
+```{r}
+ggplot(some.eu.maps, aes(x = long, y = lat)) +
+  geom_polygon(aes( group = group, fill = some.eu.maps$deaths_per_100k))+
+  geom_text(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5)+
+  scale_fill_viridis_d()+
+  theme_void()+
+  theme(legend.position = "none")
+```
+
+
+```{r}
+str(data_2)
 ```
 
 ```{r}
 View(data_2)
 ```
+
+
+'data.frame':	6021 obs. of  6 variables:
+ $ long     : num  17 16.9 16.9 16.9 16.9 ...
+ $ lat      : num  48.6 48.6 48.6 48.5 48.4 ...
+ $ group    : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ order    : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ region   : chr  "Austria" "Austria" "Austria" "Austria" ...
+ $ subregion: chr  NA NA NA NA ...
+```{r}
+str(data_2)
+```
+ 
+
+
 
 #Place labels
 ```{r}
@@ -111,6 +170,8 @@ region.lab.data <- some.eu.maps %>%
 ```
 
 #Visualize
+
+
 
 
 
@@ -178,6 +239,10 @@ dim(some.eu.maps)
 region.lab.data <- some.eu.maps %>%
   group_by(region) %>%
   summarise(long = mean(long), lat = mean(lat))
+```
+
+```{r}
+str(some.eu.maps)
 ```
 
 
