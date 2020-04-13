@@ -63,10 +63,21 @@ ggplot(world_map, aes(x = long, y = lat, group = group)) +
 #Make list of countries of interest
 ```{r}
 # Some EU Contries
+#some.eu.countries <- c(
+  "Portugal", "Spain", "France", "Switzerland", "Germany",
+  "Austria", "Belgium", "Netherlands","Italy"
+  
+  
+)
+```
+
+
+```{r}
 some.eu.countries <- c(
   "Portugal", "Spain", "France", "Switzerland", "Germany",
   "Austria", "Belgium", "UK", "Netherlands",
-   "Italy", "luxembourg"
+   "Italy"
+  
 )
 ```
 
@@ -74,6 +85,11 @@ some.eu.countries <- c(
 ```{r}
 # Retrieve the map data
 some.eu.maps <- map_data("world", region = some.eu.countries)
+```
+
+
+```{r}
+View(some.eu.maps)
 ```
 
 ```{r}
@@ -124,18 +140,63 @@ some.eu.maps<- full_join(some.eu.maps ,data, by = "region")
 
 
 ```{r}
-some.eu.maps$deaths_per_100k<- as.factor(some.eu.maps$deaths_per_100k)
+#some.eu.maps$deaths_per_100k<- as.factor(some.eu.maps$deaths_per_100k)
+some.eu.maps$binned<- as.factor(some.eu.maps$binned)
+```
+
+
+```{r}
+head(some.eu.maps)
 ```
 
 ```{r}
 ggplot(some.eu.maps, aes(x = long, y = lat)) +
-  geom_polygon(aes( group = group, fill = some.eu.maps$deaths_per_100k))+
+  geom_polygon(aes( group = group, fill = binned))+
   geom_text(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5)+
   scale_fill_viridis_d()+
   theme_void()+
   theme(legend.position = "none")
 ```
 
+
+```{r}
+some.eu.maps$deaths_per_100k<- as.factor(some.eu.maps$deaths_per_100k)
+```
+
+
+```{r   figl, fig.height=1.5, fig.width=2}
+A<-ggplot(some.eu.maps, aes(x = long, y = lat)) +
+  geom_polygon(aes( group = group, fill = deaths_per_100k))+
+  geom_text(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5, color="red")+
+  scale_fill_viridis_d()+
+  theme_void()
+A
+```
+
+
+############        B            ################
+
+
+```{r}
+some.eu.maps$binned <- as.factor(some.eu.maps$binned)
+```
+
+
+```{r   figl, fig.height=1.5, fig.width=2}
+B<-ggplot(some.eu.maps, aes(x = long, y = lat)) +
+  geom_polygon(aes( group = group, fill = binned))+
+  geom_text(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5, color="red")+
+  scale_fill_viridis_d()+
+  theme_void()
+B
+```
+
+
+
+
+###########################
+###########################
+###########################
 
 ```{r}
 str(data_2)
@@ -208,9 +269,8 @@ View(C)
 some.eu.countries <- c(
   "Portugal", "Spain", "France", "Switzerland", "Germany",
   "Austria", "Belgium", "UK", "Netherlands",
-  "Denmark", "Poland", "Italy", 
-  "Croatia", "Slovenia", "Hungary", "Slovakia",
-  "Czech republic"
+   "Italy"
+  
 )
 ```
 
@@ -246,12 +306,6 @@ str(some.eu.maps)
 ```
 
 
-ggplot(some.eu.maps, aes(x = long, y = lat)) +
-  geom_polygon(aes( group = group, fill = region))+
-  geom_text(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5)+
-  scale_fill_viridis_d()+
-  theme_void()+
-  theme(legend.position = "none")
 ```{r   figl, fig.height=2, fig.width=2}
 ggplot(some.eu.maps, aes(x = long, y = lat)) +
   geom_polygon(aes( group = group, fill = region))+
