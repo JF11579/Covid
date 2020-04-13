@@ -191,6 +191,20 @@ B<-ggplot(some.eu.maps, aes(x = long, y = lat)) +
 B
 ```
 
+####################  c #########################3
+
+
+```{r   figl, fig.height=1.5, fig.width=2}
+C<-ggplot(some.eu.maps, aes(x = long, y = lat)) +
+  geom_polygon(aes( group = group, fill = binned))+
+  geom_text(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5, color="red")+
+  scale_fill_viridis_d()+
+  theme_void()+
+  scale_fill_discrete(name="Deaths per 100k", labels=c( "Under 1", "1 to 6","7 to 12",
+                          "13 to 20", "21 to 30", "30+"))
+C
+```
+
 
 
 
