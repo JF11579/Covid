@@ -26,7 +26,7 @@ library(rworldmap)
 require(maps)
 require(ggmap)
 library(maps)
-
+library(RColorBrewer)
 ```
 # DATA NOVIA
 #https://www.datanovia.com/en/blog/how-to-create-a-map-using-ggplot2/
@@ -228,13 +228,13 @@ E<-ggplot(some.eu.maps, aes(x = long, y = lat)) +
   geom_text(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5, color="black")+
   scale_fill_viridis_d()+
   theme_void()+
-  scale_fill_discrete(name="Deaths per 100k",na.translate=FALSE, labels=c( "1 to 6","7 to 12",
+  scale_fill_discrete(name="Deaths per 100,000",na.translate=FALSE, labels=c( "1 to 6","7 to 12",
                           "13 to 20", "21 to 30", "30+"))+
-  ggtitle(label="Covid Deaths Per 100K",
+  ggtitle(label="Covid Deaths Per 100,000",
           subtitle = "The US Rate is 6 Per 100,000")+
   theme(
-    plot.title = element_text(hjust= 0.7,color = "red", size= 12, face="bold"),
-    plot.subtitle =  element_text(hjust= 0.7,color="black", size= 6)
+    plot.title = element_text(hjust= 0.5,color = "red", size= 16),
+    plot.subtitle =  element_text(hjust= 0.5,color="black", size= 7)
   )
   
 E
@@ -242,34 +242,73 @@ E
 
 
 ########### Now try single color #########33
-```{r}
-library(RColorBrewer)
-```
-
 #https://www.datanovia.com/en/blog/the-a-z-of-rcolorbrewer-palette/
 
 
 
-
-
-
-
-```{r  figl, fig.height=1.5, fig.width=2}
-
-
-F<- E+
-  scale_fill_brewer(palette = "Reds")
+```{r}
+G<-ggplot(some.eu.maps, aes(x = long, y = lat)) +
+  geom_polygon(aes( group = group, fill = binned) , color="black", size = 0.125)+
+  geom_text(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5, color="black")+
+  scale_fill_viridis_d()+
+  theme_void()+
+  scale_fill_discrete(name="Deaths per 100,000",na.translate=FALSE, labels=c( "1 to 6","7 to 12",
+                          "13 to 20", "21 to 30", "30+"))+
+  ggtitle(label="Covid Deaths Per 100,000",
+          subtitle = "The US Rate is 6 Per 100,000")+
+  theme(
+    plot.title = element_text(hjust= 0.5,color = "red", size= 16),
+    plot.subtitle =  element_text(hjust= 0.5,color="black", size= 7)
+  )
   
-F
+G
+```
+
+figl, fig.height=1, fig.width=0.75
+
+```{r}
+H<- G+
+   scale_fill_brewer(palette = "Reds",na.translate=FALSE)+
+  theme(legend.position = "right")
+  
+  
+H
 ```
 
 
 
+scale_fill_brewer(palette = "Reds",na.translate=FALSE)
 
 
+```{r}
+I<- G+
+   scale_fill_brewer(palette = "Reds",na.translate=FALSE,
+                     name="This",
+                     labels=c("1 to 5", "7 to 12", "13 to 20", "21 to 30", "30+"))
+
+  
+  
+I
+```
+
+
+```{r}
+ggsave("F.png")
+
+```
+#breaks=c("1", "7","13","21","30"),
+scale_fill_discrete(name= "Deaths Per 100,000",
+                      breaks=c("1", "7","13","21","30"),
+                      labels=c("1 to 5", "7 to 12", "13 to 20", "21 to 30", "30+"))
+
+
+
 ###########################
 ###########################
 ###########################
+```{r}
+?guides
+```
 
 
 ```{r  figl, fig.height=4, fig.width=2}
