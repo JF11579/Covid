@@ -283,7 +283,7 @@ scale_fill_brewer(palette = "Reds",na.translate=FALSE)
 ```{r}
 I<- G+
    scale_fill_brewer(palette = "Reds",na.translate=FALSE,
-                     name="This",
+                     name="Deaths Per 100,000",
                      labels=c("1 to 5", "7 to 12", "13 to 20", "21 to 30", "30+"))
 
   
