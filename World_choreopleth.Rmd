@@ -241,6 +241,27 @@ E
 ```
 
 
+########### Now try single color #########33
+```{r}
+library(RColorBrewer)
+```
+
+#https://www.datanovia.com/en/blog/the-a-z-of-rcolorbrewer-palette/
+
+
+
+
+
+
+
+```{r  figl, fig.height=1.5, fig.width=2}
+
+
+F<- E+
+  scale_fill_brewer(palette = "Reds")
+  
+F
+```
 
 
 
@@ -249,6 +270,24 @@ E
 ###########################
 ###########################
 ###########################
+
+
+```{r  figl, fig.height=4, fig.width=2}
+display.brewer.all()
+```
+```{r  figl, fig.height=2, fig.width=2}
+pal<- display.brewer.all(type="seq")
+pal
+```
+
+```{r}
+pal<- brewer.pal(5,"Reds")
+pal
+```
+
+```{r}
+display.brewer.pal(n=5, name="Reds")
+```
 
 ```{r}
 str(data_2)
