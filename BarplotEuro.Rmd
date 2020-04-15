@@ -25,3 +25,125 @@ make skinny
 bar plot group by coountry
 maybe 2 axis
 
+```{r}
+```
+
+
+```{r}
+data<- read_csv("country_pop_covid.csv")
+data
+```
+
+```{r}
+head(data,2)
+```
+
+```{r}
+data$Country<- as.factor(data$Country)
+```
+
+bar plot side by side grouped by country and stacked bar.
+make data skinny
+ 
+#ethnicities_long<- gather(ethnicities , race , number, White:All_others )
+
+
+```{r}
+head(data,2)
+```
+
+
+
+```{r}
+A<- ggplot(data, aes(x=Country, y= Population))+
+  geom_bar(stat = "identity")+
+  coord_flip()
+A
+```
+
+# stacked, grouped, dodge, multiple groups
+
+```{r}
+B<- ggplot(data, aes(x=Country, y= Population))+
+    geom_col(aes(color= "black", fill=""))
+```
+
+
+
+
+
+
+
+
+
+
+#############
+##############3
+```{r}
+#country_pop_long<- gather(data, incidences,number, Covid_deaths:deaths_per_100k )
+```
+
+```{r}
+
+```
+
+```{r}
+head(country_pop_long)
+```
+
+```{r}
+str(country_pop_long)
+```
+
+```{r}
+View(country_pop_long)
+```
+```{r}
+str(country_pop_long)
+```
+
+b1<- ggplot(data = ethnicities_long_2, aes(x= County , y = number)) +
+        geom_col(aes(fill= race) ,width = 0.7) +
+            #geom_text(aes(y=pct, label = number, group=County) , color="black")+
+            coord_flip()+
+ggtitle("NYS County Pop")
+b1
+
+
+
+```{r}
+A<- ggplot(country_pop_long, aes(x=Country, y= Population))+
+  geom_col(aes(fill=incidences), position = position_dodge(0.8), width = 0.7)+
+  coord_flip()
+A
+```
+
+
+```{r}
+df
+```
+
+```{r}
+f<- ggplot(df, aes(x-dose, y=len))
+```
+
+
+```{r}
+f <- ggplot(df, aes(x = dose, y = len))
+```
+
+```{r}
+f + geom_col(fill = "#0073C2FF")+
+  geom_text(aes(label = len), vjust = 1.6, color = "white")
+```
+
+
+
+
+
+
+
+
+
+
+ 

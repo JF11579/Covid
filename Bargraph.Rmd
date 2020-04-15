@@ -190,9 +190,21 @@ c1<- ggplot(data = NYS_Covid_Data,aes(x= County , y = New_Positives)) +
 c1
 ```
 
+```{r  figl, fig.height=5, fig.width=4}
+c2<- ggplot(data = NYS_Covid_Data,aes(x= County , y = New_Positives)) +
+      geom_col(  width = 0.7) +
+  coord_flip()+
+  ggtitle(" WSJ Style: Number of Confirmed Covid Cases as of April 9, 2020 ")+
+  ft_theme()
+
+c2
+```
 
 
 
+```{r}
+
+```
 
 
 

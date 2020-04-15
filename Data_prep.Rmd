@@ -15,6 +15,10 @@ library(tidyverse)
 
 
 ```{r}
-ethnicities<- read_csv("B03002.csv")
+ethnicities<- read_csv("B03002_select.csv")
+```
+
+```{r}
+head(ethnicities)
 ```
 
