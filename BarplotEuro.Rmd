@@ -1,0 +1,27 @@
+---
+title: "EuroBarplot"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+#Preferences
+#Turn off scientific notation
+```{r}
+options(scipen = 999)
+```
+
+#Packages
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+import data
+make skinny
+bar plot group by coountry
+maybe 2 axis
+

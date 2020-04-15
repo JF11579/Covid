@@ -249,16 +249,16 @@ E
 ```{r}
 G<-ggplot(some.eu.maps, aes(x = long, y = lat)) +
   geom_polygon(aes( group = group, fill = binned) , color="black", size = 0.125)+
-  geom_text(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5, color="black")+
+  geom_text(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5, color="black",face="bold")+
   scale_fill_viridis_d()+
   theme_void()+
   scale_fill_discrete(name="Deaths per 100,000",na.translate=FALSE, labels=c( "1 to 6","7 to 12",
                           "13 to 20", "21 to 30", "30+"))+
-  ggtitle(label="Covid Deaths Per 100,000",
-          subtitle = "The US Rate is 6 Per 100,000")+
+  ggtitle(label="Covid Deaths Per 100,000 (April 2020)",
+          subtitle = "The US Death Rate is 6 Per 100,000")+
   theme(
     plot.title = element_text(hjust= 0.5,color = "red", size= 16),
-    plot.subtitle =  element_text(hjust= 0.5,color="black", size= 7)
+    plot.subtitle =  element_text(hjust= 0.5,color="black", size= 12)
   )
   
 G
@@ -293,10 +293,78 @@ I
 
 
 ```{r}
-ggsave("F.png")
+ggsave("D.png")
 
 ```
-#breaks=c("1", "7","13","21","30"),
+
+```{r}
+z<-ggplot(some.eu.maps, aes(x = long, y = lat)) +
+  geom_polygon(aes( group = group, fill = binned) , color="black", size = 0.125)+
+  geom_label(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5, color="black",face="bold")+
+  scale_fill_viridis_d()+
+  theme_void()+
+  scale_fill_discrete(name="Deaths per 100,000",na.translate=FALSE, labels=c( "1 to 6","7 to 12",
+                          "13 to 20", "21 to 30", "30+"))+
+  ggtitle(label="Covid Deaths Per 100,000 (April 2020)",
+          subtitle = "The US Death Rate is 6 Per 100,000")+
+  theme(
+    plot.title = element_text(hjust= 0.5,color = "red", size= 16),
+    plot.subtitle =  element_text(hjust= 0.5,color="black", size= 12)
+  )
+  
+z
+```
+
+```{r}
+W<- z+
+   scale_fill_brewer(palette = "Reds",na.translate=FALSE)+
+  theme(legend.position = "right")
+  
+  
+W
+```
+
+```{r}
+V<-W+
+   scale_fill_brewer(palette = "Reds",na.translate=FALSE,
+                     name="Deaths Per 100,000",
+                     labels=c("1 to 5", "7 to 12", "13 to 20", "21 to 30", "30+"))
+
+V
+```
+
+```{r}
+ggsave("V.png")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##########################
+############################3
+
+
+
+
+
+
+
+
+
+
+
+####3###breaks=c("1", "7","13","21","30"),
 scale_fill_discrete(name= "Deaths Per 100,000",
                       breaks=c("1", "7","13","21","30"),
                       labels=c("1 to 5", "7 to 12", "13 to 20", "21 to 30", "30+"))
@@ -363,8 +431,28 @@ region.lab.data <- some.eu.maps %>%
 #Visualize
 
 
+```{r}
+z<-ggplot(some.eu.maps, aes(x = long, y = lat)) +
+  geom_polygon(aes( group = group, fill = binned) , color="black", size = 0.125)+
+  geom_label(aes(label = region), data = region.lab.data,  size = 3, hjust = 0.5, color="black",face="bold")+
+  scale_fill_viridis_d()+
+  theme_void()+
+  scale_fill_discrete(name="Deaths per 100,000",na.translate=FALSE, labels=c( "1 to 6","7 to 12",
+                          "13 to 20", "21 to 30", "30+"))+
+  ggtitle(label="Covid Deaths Per 100,000 (April 2020)",
+          subtitle = "The US Death Rate is 6 Per 100,000")+
+  theme(
+    plot.title = element_text(hjust= 0.5,color = "red", size= 16),
+    plot.subtitle =  element_text(hjust= 0.5,color="black", size= 12)
+  )
+  
+z
+```
 
 
+```{r}
+ggsave("z.png")
+```
 
 
 
