@@ -105,7 +105,41 @@ ggplot(data, aes(x=Country, y=number))+
 ```
 
 
-   
+EXample of trans_new , thisone using cubed root
+
+#https://stackoverflow.com/questions/49248937/in-rs-scales-package-why-does-trans-new-use-the-inverse-argument
+
+```{r}
+library(scales)
+```
+
+```{r}
+cube_root <- function(x) x ^ (1/3)
+cube <- function(x) x ^ 3
+```
+
+```{r}
+trans_cube <- trans_new(name = "cube root",
+                        transform = cube_root,
+                        inverse = cube)
+```
+
+# applying a transform
+ggplot(plot_data, aes(x = x, y = y)) +
+  geom_point() +
+  coord_trans(y = trans_cube)
+  
+```{r}
+ggplot(data, aes(x=Country, y=number))+
+      geom_col(aes(fill=status) , width = 0.7, position = position_stack(reverse = T))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))+
+  guides(fill = guide_legend(reverse = TRUE))+
+  ggtitle("Square Root")+
+  coord_trans(y = trans_cube)
+```
+
+
+
 
 
 
