@@ -1,140 +1,164 @@
----
-title: "EuroBarplot"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 
-#Preferences
-#Turn off scientific notation
 ```{r}
 options(scipen = 999)
 ```
 
-#Packages
 ```{r}
-library(tidyverse)
 library(ggplot2)
-```
-
-import data
-make skinny
-bar plot group by coountry
-maybe 2 axis
-
-```{r}
-```
-
-
-```{r}
-data<- read_csv("country_pop_covid.csv")
-data
+library(tidyverse)
 ```
 
 ```{r}
-head(data,2)
+FantasyLand<- read_csv("FantasyLand.csv")
 ```
 
 ```{r}
-data$Country<- as.factor(data$Country)
-```
-
-bar plot side by side grouped by country and stacked bar.
-make data skinny
- 
-#ethnicities_long<- gather(ethnicities , race , number, White:All_others )
-
-
-```{r}
-head(data,2)
+FantasyLand$Country<- as.factor(FantasyLand$Country)
 ```
 
 
-
 ```{r}
-A<- ggplot(data, aes(x=Country, y= Population))+
-  geom_bar(stat = "identity")+
-  coord_flip()
-A
-```
-
-# stacked, grouped, dodge, multiple groups
-
-```{r}
-B<- ggplot(data, aes(x=Country, y= Population))+
-    geom_col(aes(color= "black", fill=""))
+head(FantasyLand)
 ```
 
 
-
-
-
-
-
-
-
-
-#############
-##############3
 ```{r}
-#country_pop_long<- gather(data, incidences,number, Covid_deaths:deaths_per_100k )
+Fantasy_select<- select(Fantasyland, Country, Pop,Covid_deaths)
+```
+```{r}
+Fantasy_select
 ```
 
 ```{r}
-
+A<-Fantasy_select %>%
+        gather("status","number",2:3)
 ```
 
 ```{r}
-head(country_pop_long)
-```
-
-```{r}
-str(country_pop_long)
-```
-
-```{r}
-View(country_pop_long)
-```
-```{r}
-str(country_pop_long)
-```
-
-b1<- ggplot(data = ethnicities_long_2, aes(x= County , y = number)) +
-        geom_col(aes(fill= race) ,width = 0.7) +
-            #geom_text(aes(y=pct, label = number, group=County) , color="black")+
-            coord_flip()+
-ggtitle("NYS County Pop")
-b1
-
-
-
-```{r}
-A<- ggplot(country_pop_long, aes(x=Country, y= Population))+
-  geom_col(aes(fill=incidences), position = position_dodge(0.8), width = 0.7)+
-  coord_flip()
 A
 ```
 
 
 ```{r}
-df
+B<- FantasyLand%>%
+              mutate(survivors=Pop - Covid_deaths)
+                      
 ```
 
 ```{r}
-f<- ggplot(df, aes(x-dose, y=len))
+ggplot(A, aes(x=Country, y=number))+
+      geom_col(aes(fill=status, ),width = 0.7)
 ```
 
 
 ```{r}
-f <- ggplot(df, aes(x = dose, y = len))
+B
+```
+
+ethnicities_long<- gather(ethnicities , race , number, White:All_others )
+
+```{r}
+C<- gather(B,this, number,Pop:survivors)
+```
+```{r}
+C
+```
+
+
+B<- ggplot(F2, aes(x=Country,y= year))+
+  geom_bar(stat = "identity")
+B
+```{r}
+D<- ggplot(C,aes(x=Country, y= number))+
+  geom_col(aes(color=this, fill=this), position = position_stack())
+D
+```
+
+Fantasy_select<- Fan
+
+```{r}
+Fantasy_select<- Fantasyland%>%
+                  select(Country, Fantasyland$Pop,Fantasyland$Covid_deaths)
+```
+
+
+
+
+```{r}
+F2<- Fantasyland %>%
+        gather(year, cases,2:3)
 ```
 
 ```{r}
-f + geom_col(fill = "#0073C2FF")+
-  geom_text(aes(label = len), vjust = 1.6, color = "white")
+F2
+```
+
+```{r}
+B<- ggplot(F2, aes(x=Country,y= year))+
+  geom_bar(stat = "identity")
+B
+```
+
+```{r}
+Fantasyland_long
+```
+
+
+
+```{r}
+A<- ggplot(Fantasyland_long,aes(x=Country, y=per_capita_deaths,fill =factor(per_capita_deaths)))+
+  geom_bar(stat="identity",width = 0.7)
+A
+```
+
+
+
+
+
+
+
+
+##############################################
+############# Practice   #####################
+###############################################
+```{r}
+df2 <- data.frame(supp=rep(c("VC", "OJ"), each=3),
+                dose=rep(c("D0.5", "D1", "D2"),2),
+                len=c(6.8, 15, 33, 4.2, 10, 29.5))
+df2
+```
+
+```{r}
+df2
+```
+
+```{r}
+# Stacked bar plots of y = counts by x = cut,
+# colored by the variable color
+ggplot(df2, aes(x = dose, y = len)) +
+  geom_col(aes(color = supp, fill = supp), position = position_stack()) +
+  scale_color_manual(values = c("#0073C2FF", "#EFC000FF"))+
+  scale_fill_manual(values = c("#0073C2FF", "#EFC000FF"))
+```
+
+```{r}
+head(mtcars)
+```
+
+```{r}
+A<-mtcars %>% as_tibble() %>% mutate(
+  cyl2 = cyl * 2,
+  cyl4 = cyl2 * 2
+)
+```
+
+```{r}
+head(mtcars)
+```
+
+```{r}
+A
 ```
 
 
@@ -145,5 +169,3 @@ f + geom_col(fill = "#0073C2FF")+
 
 
 
-
- 
