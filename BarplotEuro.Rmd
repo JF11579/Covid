@@ -27,17 +27,15 @@ head(data,2)
 data
 ```
 
-Fantasy_select<- select(Fantasyland, Country, Pop,Covid_deaths)
+
 ```{r}
 data<-select(data,Country,Population,covid_cases)
 ```
 
 ```{r}
-head(data,2)
+head(data)
 ```
 
-A<-Fantasy_select %>%
-        gather("status","number",2:3)
 
 ```{r}
 data<- data%>%
@@ -49,199 +47,47 @@ data
 ```
 
 
-
-
-
 ```{r}
-FantasyLand<- read_csv("FantasyLand.csv")
-```
-
-```{r}
-FantasyLand$Country<- as.factor(FantasyLand$Country)
-```
-
-
-```{r}
-head(FantasyLand)
-```
-
-
-```{r}
-Fantasy_select<- select(Fantasyland, Country, Pop,Covid_deaths)
-```
-```{r}
-Fantasy_select
-```
-
-```{r}
-A<-Fantasy_select %>%
-        gather("status","number",2:3)
-```
-
-```{r}
-A
-```
-
-
-ggplot(A, aes(x=Country, y=number))+
-      geom_col(aes(fill=status, ),width = 0.7)
-```{r}
-ggplot(A, aes(Country, y=number))+
-  geom_col(aes(fill=status) , width = 0.7)
-```
-      
-
-```{r}
-ggplot(A, aes(Country, y=number))+
-  geom_col(aes(fill=status) , width = 0.7, position = position_stack(reverse = T))
-```
-
-
-
-
-
-
-
-```{r}
-B<- FantasyLand%>%
-              mutate(survivors=Pop - Covid_deaths)
-                      
-```
-
-```{r}
-ggplot(A, aes(x=Country, y=number))+
-      geom_col(aes(fill=status, ),width = 0.7)
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-```{r}
-B
-```
-
-ethnicities_long<- gather(ethnicities , race , number, White:All_others )
-
-```{r}
-C<- gather(B,this, number,Pop:survivors)
-```
-```{r}
-C
-```
-
-
-B<- ggplot(F2, aes(x=Country,y= year))+
-  geom_bar(stat = "identity")
-B
-```{r}
-D<- ggplot(C,aes(x=Country, y= number))+
-  geom_col(aes(color=this, fill=this), position = position_stack())
-D
-```
-
-Fantasy_select<- Fan
-
-```{r}
-Fantasy_select<- Fantasyland%>%
-                  select(Country, Fantasyland$Pop,Fantasyland$Covid_deaths)
-```
-
-
-
-
-```{r}
-F2<- Fantasyland %>%
-        gather(year, cases,2:3)
-```
-
-```{r}
-F2
-```
-
-```{r}
-B<- ggplot(F2, aes(x=Country,y= year))+
-  geom_bar(stat = "identity")
-B
-```
-
-```{r}
-Fantasyland_long
+ggplot(data, aes(x=Country, y=number))+
+      geom_col(aes(fill=status, ),width = 0.7)+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))+
+  scale_y_log10()
 ```
 
 
 
 ```{r}
-A<- ggplot(Fantasyland_long,aes(x=Country, y=per_capita_deaths,fill =factor(per_capita_deaths)))+
-  geom_bar(stat="identity",width = 0.7)
-A
+ggplot(data, aes(x=Country, y=number))+
+      geom_col(aes(fill=status) , width = 0.7, position = position_stack(reverse = T))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))+
+  scale_y_log10()
 ```
 
-
-
-
-
-
-
-
-##############################################
-############# Practice   #####################
-###############################################
-```{r}
-df2 <- data.frame(supp=rep(c("VC", "OJ"), each=3),
-                dose=rep(c("D0.5", "D1", "D2"),2),
-                len=c(6.8, 15, 33, 4.2, 10, 29.5))
-df2
-```
 
 ```{r}
-df2
+ggplot(data, aes(x=Country, y=number))+
+      geom_col(aes(fill=status) , width = 0.7, position = position_stack(reverse = T))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))
+  
 ```
 
-```{r}
-# Stacked bar plots of y = counts by x = cut,
-# colored by the variable color
-ggplot(df2, aes(x = dose, y = len)) +
-  geom_col(aes(color = supp, fill = supp), position = position_stack()) +
-  scale_color_manual(values = c("#0073C2FF", "#EFC000FF"))+
-  scale_fill_manual(values = c("#0073C2FF", "#EFC000FF"))
-```
 
 ```{r}
-head(mtcars)
+ggplot(data, aes(x=Country, y=number))+
+      geom_col(aes(fill=status) , width = 0.7, position = position_stack(reverse = T))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))+
+ scale_y_continuous(breaks = c( 0,9000000,10000000,100000000,200000000,300000000))
 ```
 
-```{r}
-A<-mtcars %>% as_tibble() %>% mutate(
-  cyl2 = cyl * 2,
-  cyl4 = cyl2 * 2
-)
-```
 
-```{r}
-head(mtcars)
-```
 
-```{r}
-A
-```
+   
+
+
+
+
+
+
 
 
 
