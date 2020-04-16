@@ -10,6 +10,49 @@ library(tidyverse)
 ```
 
 ```{r}
+data<- read_csv("country_pop_covid.csv")
+                
+```
+
+```{r}
+data$Country<- as.factor(data$Country)
+```
+
+```{r}
+head(data,2)
+```
+
+
+```{r}
+data
+```
+
+Fantasy_select<- select(Fantasyland, Country, Pop,Covid_deaths)
+```{r}
+data<-select(data,Country,Population,covid_cases)
+```
+
+```{r}
+head(data,2)
+```
+
+A<-Fantasy_select %>%
+        gather("status","number",2:3)
+
+```{r}
+data<- data%>%
+        gather("status", "number",2:3)
+```
+
+```{r}
+data
+```
+
+
+
+
+
+```{r}
 FantasyLand<- read_csv("FantasyLand.csv")
 ```
 
@@ -40,6 +83,25 @@ A
 ```
 
 
+ggplot(A, aes(x=Country, y=number))+
+      geom_col(aes(fill=status, ),width = 0.7)
+```{r}
+ggplot(A, aes(Country, y=number))+
+  geom_col(aes(fill=status) , width = 0.7)
+```
+      
+
+```{r}
+ggplot(A, aes(Country, y=number))+
+  geom_col(aes(fill=status) , width = 0.7, position = position_stack(reverse = T))
+```
+
+
+
+
+
+
+
 ```{r}
 B<- FantasyLand%>%
               mutate(survivors=Pop - Covid_deaths)
@@ -50,6 +112,26 @@ B<- FantasyLand%>%
 ggplot(A, aes(x=Country, y=number))+
       geom_col(aes(fill=status, ),width = 0.7)
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ```{r}
