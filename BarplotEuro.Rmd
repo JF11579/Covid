@@ -8,6 +8,9 @@ options(scipen = 999)
 library(ggplot2)
 library(tidyverse)
 ```
+'''
+# THE DATA https://docs.google.com/spreadsheets/d/e/2PACX-1vSgZnrr8yZ5Hj8-FfS_yZzgkG7VN1ywdS9QZtxdy-F3gaAZ8PXcq3NWUUEV0LYh9K_7Ye9uIxv_GkAl/pubhtml
+'''
 
 ```{r}
 data<- read_csv("country_pop_covid.csv")
@@ -51,7 +54,8 @@ data
 ggplot(data, aes(x=Country, y=number))+
       geom_col(aes(fill=status, ),width = 0.7)+
   theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))+
-  scale_y_log10()
+  scale_y_log10()+
+  ggtitle("Log 10")
 ```
 
 
@@ -60,15 +64,9 @@ ggplot(data, aes(x=Country, y=number))+
 ggplot(data, aes(x=Country, y=number))+
       geom_col(aes(fill=status) , width = 0.7, position = position_stack(reverse = T))+
   theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))+
-  scale_y_log10()
-```
-
-
-```{r}
-ggplot(data, aes(x=Country, y=number))+
-      geom_col(aes(fill=status) , width = 0.7, position = position_stack(reverse = T))+
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))
-  
+  scale_y_log10()+
+   guides(fill = guide_legend(reverse = TRUE))+
+  ggtitle("Log 10")
 ```
 
 
@@ -76,9 +74,35 @@ ggplot(data, aes(x=Country, y=number))+
 ggplot(data, aes(x=Country, y=number))+
       geom_col(aes(fill=status) , width = 0.7, position = position_stack(reverse = T))+
   theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))+
- scale_y_continuous(breaks = c( 0,9000000,10000000,100000000,200000000,300000000))
+  scale_y_continuous(trans='log2')+
+   guides(fill = guide_legend(reverse = TRUE))+
+  ggtitle("Log 2")
 ```
 
+
+```{r}
+ggplot(data, aes(x=Country, y=number))+
+      geom_col(aes(fill=status) , width = 0.7, position = position_stack(reverse = T))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))+
+  guides(fill = guide_legend(reverse = TRUE))+
+   scale_y_sqrt()+
+  ggtitle("Square Root")
+```
+
+
+```{r}
+ggplot(data, aes(x=Country, y=number))+
+      geom_col(aes(fill=status) , width = 0.7, position = position_stack(reverse = T))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))+
+ scale_y_continuous(breaks = c( 0,9000000,10000000,100000000,200000000,300000000))+
+  ggtitle("Messing with the breaks")
+```
+
+
+# You can also create your own. See ?scales::trans_new
+```{r}
+?scales::trans_new
+```
 
 
    
