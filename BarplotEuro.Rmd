@@ -7,6 +7,7 @@ options(scipen = 999)
 ```{r}
 library(ggplot2)
 library(tidyverse)
+
 ```
 '''
 # THE DATA https://docs.google.com/spreadsheets/d/e/2PACX-1vSgZnrr8yZ5Hj8-FfS_yZzgkG7VN1ywdS9QZtxdy-F3gaAZ8PXcq3NWUUEV0LYh9K_7Ye9uIxv_GkAl/pubhtml
@@ -134,19 +135,55 @@ ggplot(data, aes(x=Country, y=number))+
       geom_col(aes(fill=status) , width = 0.7, position = position_stack(reverse = T))+
   theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))+
   guides(fill = guide_legend(reverse = TRUE))+
-  ggtitle("Square Root")+
+  ggtitle("Cubed Root")+
+  coord_trans(y = trans_cube)
+```
+
+
+```{r}
+quarter_root <- function(x) x ^ (1/4)
+cube <- function(x) x ^ 4
+```
+
+
+```{r}
+ggplot(data, aes(x=Country, y=number))+
+      geom_col(aes(fill=status) , width = 0.7, position = position_stack(reverse = T))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))+
+  guides(fill = guide_legend(reverse = TRUE))+
+  ggtitle("Quarter Root")+
   coord_trans(y = trans_cube)
 ```
 
 
 
+```{r}
+quarter_root <- function(x) x ^ (1/8)
+cube <- function(x) x ^ 8
+```
+
+```{r}
+ggplot(data, aes(x=Country, y=number))+
+      geom_col(aes(fill=status) , width = 0.7, position = position_stack(reverse = T))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))+
+  guides(fill = guide_legend(reverse = TRUE))+
+  ggtitle("Eighth Root")+
+  coord_trans(y = trans_cube)+
+ 
+```
 
 
-
-
-
-
-
+```{r}
+ggplot(data, aes(x=Country, y=number))+
+      geom_col(aes(fill=status) , width = 0.7, position = position_stack(reverse = T))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))+
+  guides(fill = guide_legend(reverse = TRUE))+
+  ggtitle("Specific Y Ticks & Cubed Root")+
+  coord_trans(y = trans_cube)+
+  scale_y_continuous(breaks = c(50000, 5000000,000,100000000, 300000000))+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))
+```
 
 
 
