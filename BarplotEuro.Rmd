@@ -216,6 +216,9 @@ theme( # remove the vertical grid lines
            panel.grid.major.y = element_line( size=.1, color="black" ) 
     )
 ```
+```{r}
+ggsave("Euro_Bar_Pop.png")
+```
 
 
 labs(title = ("Covid Cases as Proportion of Population",
