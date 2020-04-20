@@ -178,6 +178,7 @@ scale_fill_manual(values = c("blue","red","red","red","red","red","red","red","r
 ```{r}
 Testing_2<- ggplot(tests_per_capita,aes(x=reorder(Country,-Tests_performed), y= Tests_performed))+
       geom_bar(stat = "identity", fill=c("red","red","red","blue","red","red","red","red","red","red","red","red"))+
+  scale_y_continuous(labels = comma)+
   labs(title = "Tests Performed in Each Country",
               subtitle = "April 19, 2020",
               caption = "")+
@@ -202,6 +203,7 @@ Testing_2
 ```{r}
 Per_Capita_Testing_2<- ggplot(tests_per_capita,aes(x=reorder(Country,-Per), y= Per))+
       geom_bar(stat = "identity", fill=c("red","red","red","blue","red","red","red","red","red","red","red","red"))+
+  scale_y_continuous(labels = comma)+
   labs(title = "Tests Per 100,000 Citizens",
               subtitle = "April 19, 2020",
               caption = "Data source: OurWorldInData.org")+
@@ -229,8 +231,13 @@ Per_Capita_Testing_2
 grid.arrange(Testing_2 , Per_Capita_Testing_2, ncol=2)
 
 ```{r}
-grid.arrange(arrangeGrob(Testing_2,top = "") , arrangeGrob(Per_Capita_Testing_2,top = "") , top= "Keeping It In Proportion", ncol=2)
+g<-grid.arrange(arrangeGrob(Testing_2,top = "") , arrangeGrob(Per_Capita_Testing_2,top = "") , top= "Keeping It In Proportion", ncol=2)
 ```
 
+
+
+```{r}
+ggsave(file="KeepingItInProportion.png", g)
+```
 
 
