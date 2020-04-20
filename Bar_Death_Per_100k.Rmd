@@ -10,6 +10,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(tidyverse)
 library(ggplot2)
+library(gridExtra)
+```
+
+```{r}
+options(scipen = 999)
 ```
 
 
@@ -58,4 +63,174 @@ theme( # remove the vertical grid lines
     )
 B1
 ```
+
+
+```{r}
+B1<- ggplot(data,aes(x=reorder(Country,-deaths_per_100k), y= data$deaths_per_100k))+
+      geom_bar(stat = "identity",color="red",fill="red")+
+  labs(title = "Covid Deaths Per 100,000 Citizens",
+              subtitle = "April 19, 2020",
+              caption = "Datasource: Johns Hopkins Corona Resource Center")+
+  theme(
+    plot.title = element_text(hjust=0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )+
+  theme_classic()+
+      theme(axis.line.y = element_line(colour = 'black', size=1, linetype='solid'))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1,hjust = 0.99))+
+  theme(axis.title.x = element_blank(),
+          axis.title.y = element_blank())+
+theme( # remove the vertical grid lines
+           panel.grid.major.x = element_blank() ,
+           # explicitly set the horizontal lines (or they will disappear too)
+           panel.grid.major.y = element_blank() 
+    )
+  
+B1
+```
+
+#https://ourworldindata.org/grapher/full-list-total-tests-for-covid-19
+
+
+# side by side graphs.  Abosultute Number of tests and 
+#tests per 100k
+
+```{r}
+tests_per_capita<-read_csv("Covid_tests_Per_100k.csv")
+```
+
+```{r}
+tests_per_capita$Country <- as.factor(tests_per_capita$Country)
+```
+
+
+```{r}
+Testing<- ggplot(tests_per_capita,aes(x=reorder(Country,-Tests_performed), y= Tests_performed))+
+      geom_bar(stat = "identity",color="red",fill="red")+
+  labs(title = "Number of Tests Performed in Each Country",
+              subtitle = "April 19, 2020",
+              caption = "Data source: OurWorldInData.org")+
+  theme(
+    plot.title = element_text(hjust=0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )+
+  theme_classic()+
+      theme(axis.line.y = element_line(colour = 'black', size=1, linetype='solid'))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1,hjust = 0.99))+
+  theme(axis.title.x = element_blank(),
+          axis.title.y = element_blank())+
+theme( # remove the vertical grid lines
+           panel.grid.major.x = element_blank() ,
+           # explicitly set the horizontal lines (or they will disappear too)
+           panel.grid.major.y = element_blank() 
+    )
+  
+Testing
+```
+
+
+
+```{r}
+Per_Capita_Testing<- ggplot(tests_per_capita,aes(x=reorder(Country,-Per), y= Per))+
+      geom_bar(stat = "identity",color="red",fill="red")+
+  labs(title = "Tests Performed Per 100,000 Citizens",
+              subtitle = "April 19, 2020",
+              caption = "Data source: OurWorldInData.org")+
+  theme(
+    plot.title = element_text(hjust=0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )+
+  theme_classic()+
+      theme(axis.line.y = element_line(colour = 'black', size=1, linetype='solid'))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1,hjust = 0.99))+
+  theme(axis.title.x = element_blank(),
+          axis.title.y = element_blank())+
+theme( # remove the vertical grid lines
+           panel.grid.major.x = element_blank() ,
+           # explicitly set the horizontal lines (or they will disappear too)
+           panel.grid.major.y = element_blank() 
+    )
+  
+Per_Capita_Testing
+```
+
+
+```{r}
+grid.arrange(Testing , Per_Capita_Testing, ncol=2)
+```
+
+gridExtra::grid.arrange(plot(euler1, main = 'title1'),
+plot(euler2, main = 'title2'))
+
+grid.arrange(grobs = list(p1, p2), top = "Global Title", ncol=2)
+
+
+############  Coloring the bars manually################
+
+```{r}
+x<- Testing+
+  scale_fill_manual(values = c("blue","red","red","red","red","red","red","red","red","red","red","red"))
+x
+```
+
+scale_fill_manual(values = c("blue","red","red","red","red","red","red","red","red","red","red","red"))+
+
+```{r}
+Testing_2<- ggplot(tests_per_capita,aes(x=reorder(Country,-Tests_performed), y= Tests_performed))+
+      geom_bar(stat = "identity", fill=c("red","red","red","blue","red","red","red","red","red","red","red","red"))+
+  labs(title = "Tests Performed in Each Country",
+              subtitle = "April 19, 2020",
+              caption = "")+
+  theme(
+    plot.title = element_text(hjust=0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )+
+  theme_classic()+
+      theme(axis.line.y = element_line(colour = 'black', size=1, linetype='solid'))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1,hjust = 0.99))+
+  theme(axis.title.x = element_blank(),
+          axis.title.y = element_blank())+
+theme( # remove the vertical grid lines
+           panel.grid.major.x = element_blank() ,
+           # explicitly set the horizontal lines (or they will disappear too)
+           panel.grid.major.y = element_blank() 
+    )
+  
+Testing_2
+```
+
+```{r}
+Per_Capita_Testing_2<- ggplot(tests_per_capita,aes(x=reorder(Country,-Per), y= Per))+
+      geom_bar(stat = "identity", fill=c("red","red","red","blue","red","red","red","red","red","red","red","red"))+
+  labs(title = "Tests Per 100,000 Citizens",
+              subtitle = "April 19, 2020",
+              caption = "Data source: OurWorldInData.org")+
+  theme(
+    plot.title = element_text(hjust=0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )+
+  theme_classic()+
+      theme(axis.line.y = element_line(colour = 'black', size=1, linetype='solid'))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1,hjust = 0.99))+
+  theme(axis.title.x = element_blank(),
+          axis.title.y = element_blank())+
+theme( # remove the vertical grid lines
+           panel.grid.major.x = element_blank() ,
+           # explicitly set the horizontal lines (or they will disappear too)
+           panel.grid.major.y = element_blank() 
+    )
+  
+  
+Per_Capita_Testing_2
+```
+
+
+
+grid.arrange(Testing_2 , Per_Capita_Testing_2, ncol=2)
+
+```{r}
+grid.arrange(arrangeGrob(Testing_2,top = "") , arrangeGrob(Per_Capita_Testing_2,top = "") , top= "Keeping It In Proportion", ncol=2)
+```
+
+
 
