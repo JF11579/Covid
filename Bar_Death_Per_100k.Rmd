@@ -40,3 +40,22 @@ theme( # remove the vertical grid lines
 B1
 ```
 
+```{r}
+B1<- ggplot(data,aes(x=reorder(Country,-deaths_per_100k), y= data$deaths_per_100k))+
+      geom_bar(stat = "identity",color="red",fill="red")+
+  labs(title = "Covid Deaths Per 100,000 Citizens",
+              subtitle = "",
+              caption = "Datasource: Johns Hopkins Corona Resource Center")+
+  theme_classic()+
+      theme(axis.line.y = element_line(colour = 'black', size=1, linetype='solid'))+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1,hjust = 0.99))+
+  theme(axis.title.x = element_blank(),
+          axis.title.y = element_blank())+
+theme( # remove the vertical grid lines
+           panel.grid.major.x = element_blank() ,
+           # explicitly set the horizontal lines (or they will disappear too)
+           panel.grid.major.y = element_line( size=.1, color="black" ) 
+    )
+B1
+```
+
