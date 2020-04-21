@@ -6,3 +6,54 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+#Link to GoogDrive did not work.
+```{r}
+library(googledrive)
+```
+#https://googledrive.tidyverse.org/
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+```
+
+```{r}
+#drive_find( pattern = "covid-tests-cases-deaths")
+```
+
+# data  https://drive.google.com/open?id=1AWZ8TKpnka7Mn3kjHSo3Rjf9Su3RTSJY
+
+
+```{r}
+data<- read_csv("covid_tests.csv")
+```
+
+```{r}
+dim(data)
+```
+
+```{r}
+str(data)
+```
+
+
+```{r}
+#Lets filter out SK and US
+SK<- filter(data, Code =="Korea" |Date == "States")
+```
+
+```{r}
+dim(SK)
+```
+
+
+```{r}
+US<- filter(data,Code == "States")
+```
+
+```{r}
+dim(US)
+```
+
