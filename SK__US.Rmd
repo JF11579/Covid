@@ -21,6 +21,11 @@ library(lubridate)
 ```
 
 ```{r}
+options(scipen = 999)
+```
+
+
+```{r}
 #drive_find( pattern = "covid-tests-cases-deaths")
 ```
 
@@ -40,14 +45,6 @@ str(data)
 ```
 
 
-```{r}
-#Lets filter out SK and US
-SK<- filter(data, Code =="Korea" |Date == "States")
-```
-
-```{r}
-dim(SK)
-```
 
 
 ```{r}
@@ -57,26 +54,34 @@ US<- filter(data,Code == "States")
 ```{r}
 dim(US)
 ```
+```{r}
+head(US)
+```
 
 
 ```{r}
-data_2<- bind_rows(US, SK)
+#data_2<- bind_rows(US, SK)
 ```
 
 ```{r}
 #drop any irrelevant rows like Virgin Isles
-data_3<- data%>%
+US_SK_tests<- data%>%
       filter(Date %in% c("KOR", "USA"))
 ```
 
 ```{r}
-View(data_3)
+View(US_SK_tests)
+```
+
+
+```{r}
+write_csv(US_SK_tests, "US_SK_tests.csv")
 ```
 
 ```{r}
 str(data_3)
 ```
-
+######################################################################
 ######### Next repeat the proces with covid death stats ###############
 
 
@@ -84,6 +89,92 @@ str(data_3)
 covid_deaths<- read_csv("covid_daily_deaths.csv")
 ```
 
+```{r}
+View(covid_deaths)
+```
+
+```{r}
+US_deaths<- filter(covid_deaths,Code == "USA")
+```
+
+```{r}
+View(US_deaths)
+```
+```{r}
+str(US_deaths)
+```
+
+```{r}
+head(US_deaths,2)
+```
+
+
+```{r}
+#Change col names
+#rename(new name = existing)
+US_deaths<- US_deaths %>%
+            rename(Country = Entity ,Deaths = `Daily confirmed deaths (deaths)`)
+```
+
+```{r}
+head(US_deaths)
+```
+
+```{r}
+US_deaths$Country<- as.factor(US_deaths$Country)
+```
+
+```{r}
+#Convert to date type.convert()
+#US_SK_tests$Date<- mdy(US_SK_tests$Date)
+US_deaths$Date <- mdy(US_deaths$Date)
+```
+
+
+```{r}
+US_deaths$Deaths<- as.numeric(US_deaths$Deaths)
+```
+
+```{r}
+str(US_deaths)
+```
+
+```{r}
+head(US_deaths)
+```
+
+US_SK_deaths %>%
+    group_by(month=floor_date(Date,"month")) %>%
+    summarise(tot_deaths=sum(deaths))
+    
+X<- US_SK_deaths %>%
+    group_by(month=floor_date(Date,"month")) %>%
+    summarise(tot_deaths=sum(deaths))
+X
+```{r}
+#next group by month
+US_deaths<-US_deaths %>%
+    group_by(month=floor_date(Date,"month")) %>%
+    summarise(tot_deaths=sum(Deaths))
+US_deaths
+```
+
+
+```{r}
+ head(US_deaths)
+```
+
+```{r}
+#Add country data back in
+#X$x1<- 'SouthKorea'
+US_deaths$Country <- "SouthKorea"
+
+
+```
+
+```{r}
+head(US_deaths)
+```
 
 
 
@@ -94,3 +185,168 @@ covid_deaths<- read_csv("covid_daily_deaths.csv")
 
 
 
+
+
+
+
+
+
+#########3
+##############
+############
+```{r}
+SK_deaths<- filter(covid_deaths,Code == "KOR")
+```
+
+```{r}
+View(SK_deaths)
+```
+
+```{r}
+#now combine US_SK death data.
+#US_SK_deaths<- bind_rows(US_deaths, SK_deaths)
+```
+
+```{r}
+View(US_SK_deaths)
+```
+
+```{r}
+write_csv(US_SK_deaths,"US_SK_deaths.csv")
+```
+
+########## import cleaned up data ##########
+
+```{r}
+US_SK_tests<- read_csv("US_SK_tests.csv")
+```
+
+```{r}
+str(US_SK_tests)
+```
+
+```{r}
+US_SK_tests$Country<- as.factor(US_SK_tests$Country)
+```
+
+
+
+```{r}
+US_SK_tests$Date<- mdy(US_SK_tests$Date)
+```
+
+```{r}
+head(US_SK_tests)
+```
+
+```{r}
+B<- US_SK_tests%>%
+      group_by(Date, "month") %>%
+      mutate(total_test= cumsum(tests))
+B
+```
+
+
+
+```{r}
+US_SK_deaths<- read_csv("US_SK_deaths.csv")
+```
+
+```{r}
+US_SK_deaths$Country<- as.factor(US_SK_deaths$Country)
+```
+
+
+```{r}
+US_SK_deaths$Date<- mdy(US_SK_deaths$Date)
+```
+
+```{r}
+head(US_SK_deaths,3)
+```
+
+```{r}
+A<-US_SK_deaths_2<- US_SK_deaths %>%
+mutate(month = format(Date, "%m"), year = format(Date, "%Y")) %>%
+group_by(month, year) %>%
+summarise(total = sum(deaths))
+```
+
+```{r}
+A
+```
+
+
+######## Line Graph Tests
+
+```{r}
+L1<- ggplot(US_SK_tests,
+            aes(x=Date,y= tests, color= factor(Country)))+
+              geom_line()+
+  ggtitle("Tests")
+L1
+```
+
+
+########### Bar Graph for Deaths
+
+
+```{r}
+# graph by month:
+ggplot(US_SK_deaths = log,
+  aes(Date, Deaths)) +
+  stat_summary(fun.y = sum, # adds up all observations for the month
+    geom = "bar") + # or "line"
+  scale_x_date(
+    labels = date_format("%Y-%m-%d"),
+    breaks = "1 month")
+```
+
+```{r}
+B1<- ggplot(US_SK_deaths,
+            aes(x=Date, y= deaths, color = factor(Country)))+
+            geom_col(aes(color=Country,fill=Country))+
+  ggtitle("Deaths")
+B1
+```
+
+
+############### junk ############
+
+```{r}
+(expenses <- data_frame(
+  date=seq(as.Date("2016-01-01"), as.Date("2016-12-31"), by=1),
+  amount=rgamma(length(date), shape = 2, scale = 20)))
+```
+
+
+```{r}
+expenses %>% group_by(month=floor_date(date, "month")) %>%
+   summarize(amount=sum(amount))
+
+```
+
+
+```{r}
+str(US_SK_deaths)
+```
+
+```{r}
+X<- US_SK_deaths %>%
+    group_by(month=floor_date(Date,"month")) %>%
+    summarise(tot_deaths=sum(deaths))
+X
+```
+
+```{r}
+X$x1<- 'SouthKorea'
+```
+
+```{r}
+head(X)
+```
+
+
+'''
+ok.  sum month death totals for seperate countries ehn rbind.
+'''
