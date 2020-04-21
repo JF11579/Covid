@@ -44,6 +44,9 @@ dim(data)
 str(data)
 ```
 
+```{r}
+View(covid_deaths)
+```
 
 
 
@@ -143,14 +146,7 @@ str(US_deaths)
 head(US_deaths)
 ```
 
-US_SK_deaths %>%
-    group_by(month=floor_date(Date,"month")) %>%
-    summarise(tot_deaths=sum(deaths))
-    
-X<- US_SK_deaths %>%
-    group_by(month=floor_date(Date,"month")) %>%
-    summarise(tot_deaths=sum(deaths))
-X
+
 ```{r}
 #next group by month
 US_deaths<-US_deaths %>%
@@ -167,7 +163,7 @@ US_deaths
 ```{r}
 #Add country data back in
 #X$x1<- 'SouthKorea'
-US_deaths$Country <- "SouthKorea"
+US_deaths$Country <- "USA"
 
 
 ```
@@ -175,6 +171,103 @@ US_deaths$Country <- "SouthKorea"
 ```{r}
 head(US_deaths)
 ```
+
+#Next SK deaths
+
+
+```{r}
+#Change col names
+#rename(new name = existing)
+#US_deaths<- US_deaths %>%
+            #rename(Country = Entity ,Deaths = `Daily confirmed deaths (deaths)`)
+SK_deaths<-SK_deaths %>%
+            rename(Country= Entity, Deaths = `Daily confirmed deaths (deaths)`)
+```
+
+```{r}
+SK_deaths$Country <- as.factor(SK_deaths$Country)
+```
+
+```{r}
+#US_deaths$Date <- mdy(US_deaths$Date)
+SK_deaths$Date <- mdy(SK_deaths$Date)
+```
+
+
+```{r}
+head(SK_deaths,2)
+```
+
+```{r}
+#US_deaths<- filter(covid_deaths,Code == "USA")
+SK_deaths<- filter(covid_deaths,Entity =="South Korea")
+```
+
+```{r}
+head(SK_deaths)
+```
+
+X<- US_SK_deaths %>%
+    group_by(month=floor_date(Date,"month")) %>%
+    summarise(tot_deaths=sum(deaths))
+```{r}
+#next get monthly sums
+SK_deaths<- SK_deaths %>%
+    group_by(month=floor_date(Date,"month")) %>%
+    summarise(tot_deaths=sum(Deaths))
+SK_deaths
+```
+
+```{r}
+#now restore country name
+#X$x1<- 'SouthKorea'
+SK_deaths$Country <- 'South Korea'
+```
+
+```{r}
+head(SK_deaths,2)
+```
+
+#Next rowbind the US & SK deaths
+```{r}
+A<- rbind(US_deaths, SK_deaths)
+```
+
+# Now try bar plotting
+
+```{r}
+B2<-  ggplot(A,
+            aes(x=month, y= tot_deaths, color = factor(Country)))+
+            geom_col(aes(color = Country, fill = Country), position = position_dodge(10), width = 1) +
+  ggtitle("Deaths")+
+  scale_y_log10()
+B2
+```
+ scale_y_continuous(breaks = c( 0,9000000,10000000,100000000,200000000,300000000))+
+ 
+  theme(axis.title.x = element_blank(),
+          axis.title.y = element_blank())+
+theme( # remove the vertical grid lines
+           panel.grid.major.x = element_blank() ,
+           # explicitly set the horizontal lines (or they will disappear too)
+           panel.grid.major.y = element_line( size=.1, color="black" ) 
+```{r}
+B3<-  ggplot(A,
+            aes(x=month, y= tot_deaths, color = factor(Country)))+
+            geom_col(aes(color = Country, fill = Country, width=20), position = position_dodge(20), width = 0.1) +
+  ggtitle("Deaths")+
+  scale_y_sqrt()+
+   scale_y_continuous(breaks = c( 100,200000,400000,600000))+
+  labs(x="", y="Deaths") +
+  theme_classic()
+  
+  
+B3
+```
+ 
+
+
+
 
 
 
@@ -283,9 +376,52 @@ A
 L1<- ggplot(US_SK_tests,
             aes(x=Date,y= tests, color= factor(Country)))+
               geom_line()+
-  ggtitle("Tests")
+  ggtitle("Tests")+
+  theme_classic()
 L1
 ```
+
+
+
+################ Layered Plots #####################
+
+```{r}
+ ggplot(A,
+            aes(x=month, y= tot_deaths, color = factor(Country)))+
+            geom_col(aes(color = Country, fill = Country, width=20), position = position_dodge(20), width = 0.1) +
+  ggtitle("Deaths")+
+  scale_y_sqrt()+
+   scale_y_continuous(breaks = c( 100,200000,400000,600000))+
+  labs(x="", y="Deaths") +
+  theme_classic()+
+  geom_label()+
+  deom_line
+  
+  
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ########### Bar Graph for Deaths
@@ -345,8 +481,56 @@ X$x1<- 'SouthKorea'
 ```{r}
 head(X)
 ```
+#example
+```{r}
+df1 <- data.frame(p=c(10,8,7,3,2,6,7,8),
+             v=c(100,300,150,400,450,250,150,400))
+```
+
+```{r}
+df2 <- data.frame(p=c(10,8,6,4), v=c(150,250,350,400))
+```
+
+```{r}
+plot1 <- qplot(df1$v, df1$p)
+plot1
+```
+
+```{r}
+plot2 <- qplot(df2$v, df2$p, geom="step")
+plot2
+```
+
+```{r}
+plot3 <- ggplot(df1, aes(v, p)) + geom_point()
+plot3
+```
+```{r}
+plot4 <- ggplot(df2, aes(v, p)) + geom_step()
+plot4
+```
+
+```{r}
+#df1 is the default dataset for all geoms
+(plot1 <- ggplot(df1, aes(v, p)) + 
+    geom_point() +
+    geom_step(data = df2)
+)
+```
+
+```{r}
+#No default; data explicitly specified for each geom
+(plot2 <- ggplot(NULL, aes(v, p)) + 
+      geom_point(data = df1) +
+      geom_step(data = df2)
+)
+```
 
 
-'''
-ok.  sum month death totals for seperate countries ehn rbind.
-'''
+#https://stackoverflow.com/questions/9109156/ggplot-combining-two-plots-from-different-data-frames
+```{r}
+ggplot() + 
+geom_line(data=df1, aes(x=A, y=B), color='green') + 
+geom_line(data=df2, aes(x=C, y=D), color='red')
+```
+
