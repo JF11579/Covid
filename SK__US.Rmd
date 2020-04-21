@@ -17,6 +17,7 @@ library(googledrive)
 library(tidyverse)
 library(ggplot2)
 library(lubridate)
+
 ```
 
 ```{r}
@@ -56,4 +57,40 @@ US<- filter(data,Code == "States")
 ```{r}
 dim(US)
 ```
+
+
+```{r}
+data_2<- bind_rows(US, SK)
+```
+
+```{r}
+#drop any irrelevant rows like Virgin Isles
+data_3<- data%>%
+      filter(Date %in% c("KOR", "USA"))
+```
+
+```{r}
+View(data_3)
+```
+
+```{r}
+str(data_3)
+```
+
+######### Next repeat the proces with covid death stats ###############
+
+
+```{r}
+covid_deaths<- read_csv("covid_daily_deaths.csv")
+```
+
+
+
+
+
+
+
+
+
+
 
