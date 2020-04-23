@@ -31,10 +31,185 @@ options(scipen = 999)
 
 # data  https://drive.google.com/open?id=1AWZ8TKpnka7Mn3kjHSo3Rjf9Su3RTSJY
 
+#sites that show combo plots
+#This one shows 2 lines and side by side plots:
+#https://stackoverflow.com/questions/44406921/how-to-combine-line-and-bar-chart-in-ggplot2-with-just-one-grouping-variable
+
+#https://stackoverflow.com/questions/47940161/ggplot-plotting-bars-and-lines-in-the-same-chart
+
+#https://stackoverflow.com/questions/41764312/combining-bar-and-line-chart-double-axis-in-ggplot2
+
+
+'''
+The plan.
+Create a plot that has a line for US and a seperate line for SK that shows the monthly  number of tests starting from whatever date both got first confirmed case.
+
+These two lines will be on the same graph as a side by side bar plot that shows the monthly death total PER 100k for each country.
+Because the data is such a mess for both he test data and the death data I will seperate US & Sk and work on each of the 4 parts indivudally.
+
+
+Need to make rename cols, drop extraneous cols, make country categorical, make date date type, add mutate in country pop, mutate in tests / deaths per 100k.
+
+After all of that rbind US&SK back together , so where I had 4 now I have two data sets .
+
+      * rename columns
+      *drop extraneous columns
+      #concatenate 1st & 2nd columns
+      *change COUNTRY to factor
+      *change DATE to date-type
+      * filter out extraneous dates
+      *add column of population
+      * add column of testes per 100k
+      
+'''
 
 ```{r}
 data<- read_csv("covid_tests.csv")
 ```
+
+# First Test Data
+```{r}
+View(data)
+```
+
+```{r}
+# First we will filter out the US test data 
+#There may not be a single column in this Data properly named.
+US_tests<- filter(data,Date == "USA")
+```
+
+```{r}
+#rename cols
+#rename(new name = existing)
+#US_deaths<- US_deaths %>%
+            #rename(Country = Entity ,Deaths = `Daily confirmed deaths (deaths)`)
+US_tests<- US_tests %>%
+            rename(Country = Entity ,Second= Code, Code = Date, Date = Cumulative)
+```
+
+```{r}
+#drop extraneous cols
+## Notice the lack of quotes
+#iris %>% select (-c(Sepal.Length, Sepal.Width))
+## Notice the lack of quotes
+US_tests<-US_tests %>% select (-c(Total, confirmed, deaths, (deaths), Total_1,
+                        confirmed_1, cases, (cases)))
+```
+
+```{r}
+# variables names in parathesis not dropped above
+#df$x <- NULL
+US_tests$`(deaths)`<- NULL
+```
+
+```{r}
+# variables names in parathesis not dropped above
+#df$x <- NULL
+US_tests$`(cases)`<- NULL
+```
+
+
+```{r}
+# 'UNITED' and 'STATES' are in seperate cols.  Concatenate.
+US_tests$Country<- paste(US_tests$Country, US_tests$Second)
+```
+
+```{r}
+#Now "SECOND" is extraneous
+US_tests$Second <- NULL
+```
+
+```{r}
+US_tests$Country<- as.factor(US_tests$Country)
+```
+
+```{r}
+US_tests$Date <- mdy(US_tests$Date)
+```
+
+```{r}
+#US & SK each got the first confirmed case on thesame day
+#We will filter out dates BEFORE that
+
+US_tests <-US_tests %>%
+        filter(Date >= as.Date("2020-01-20") & Date <= as.Date("2020-04-20"))
+```
+
+```{r}
+#We will calcculate teste per 100k but first we need to add_case(collumn filled with #US population .  328,200,000)
+# main$newcol <- rep(1,nrow(main))
+US_tests$population <-rep(328200000, nrow(US_tests))
+```
+
+```{r}
+#Some of our "test" data is NA.  
+#We need to change those to 0's
+US_tests$tests[is.na(US_tests$tests)] <-0
+```
+
+```{r}
+#make sure TESTS are numeric
+US_tests$tests <- as.numeric(US_tests$tests)
+```
+
+```{r}
+# Using MUTATE we generate new column based on existing
+US_tests<- US_tests %>%
+    mutate(per_100k = (tests / population)*100000)
+```
+
+```{r}
+# Let us reduce the decomal places
+#X<- US_tests
+    
+```
+
+```{r}
+US_tests[ , 'per_100k']= round(US_tests[ , 'per_100k'] , 1)
+```
+
+
+
+```{r}
+str(US_tests)
+```
+First confirmation January 20, 2020
+
+
+
+```{r}
+View(US_tests)
+```
+
+```{r}
+View(X)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###################################################################
+#################   Garbage Below #################################
+###################################################################
 
 ```{r}
 dim(data)
@@ -45,7 +220,11 @@ str(data)
 ```
 
 ```{r}
-View(covid_deaths)
+```
+
+
+```{r}
+View(data)
 ```
 
 
@@ -533,4 +712,46 @@ ggplot() +
 geom_line(data=df1, aes(x=A, y=B), color='green') + 
 geom_line(data=df2, aes(x=C, y=D), color='red')
 ```
+
+
+```{r}
+Year <- c(2014, 2015, 2016)
+Response <- c(1000, 1100, 1200)
+Rate <- c(0.75, 0.42, 0.80)
+```
+
+
+```{r}
+df <- data.frame(Year, Response, Rate)
+df
+```
+```{r}
+ggplot(df)  + 
+    geom_bar(aes(x=Year, y=Response),stat="identity", fill="tan1", colour="sienna3")+
+    geom_line(aes(x=Year, y=Rate*max(df$Response)),stat="identity")+
+    geom_text(aes(label=Rate, x=Year, y=Rate*max(df$Response)), colour="black")+
+    geom_text(aes(label=Response, x=Year, y=0.95*Response), colour="black")+
+    scale_y_continuous(sec.axis = sec_axis(~./max(df$Response)))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
