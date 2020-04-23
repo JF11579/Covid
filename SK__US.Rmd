@@ -181,9 +181,100 @@ First confirmation January 20, 2020
 View(US_tests)
 ```
 
+################## Now SK tests ##################
+
+
 ```{r}
-View(X)
+# First we will filter out the US test data 
+#There may not be a single column in this Data properly named.
+SK_tests<- filter(data,Code == "Korea")
 ```
+
+
+```{r}
+#rename cols
+#rename(new name = existing)
+#US_deaths<- US_deaths %>%
+            #rename(Country = Entity ,Deaths = `Daily confirmed deaths (deaths)`)
+SK_tests<- SK_tests %>%
+            rename(Country = Entity ,Second= Code, Code = Date, Date = Cumulative)
+```
+
+
+```{r}
+#drop extraneous cols
+## Notice the lack of quotes
+#iris %>% select (-c(Sepal.Length, Sepal.Width))
+## Notice the lack of quotes
+SK_tests<-SK_tests %>% select (-c(Total, confirmed, deaths, (deaths), Total_1,
+                        confirmed_1, cases, (cases)))
+```
+
+```{r}
+SK_tests$`(deaths)`<- NULL
+```
+
+```{r}
+SK_tests$`(cases)`<- NULL
+```
+
+
+```{r}
+SK_tests$Country<- paste(SK_tests$Country, SK_tests$Second)
+```
+
+
+```{r}
+SK_tests$Second<- NULL
+```
+
+```{r}
+SK_tests$Country<- as.factor(SK_tests$Country)
+```
+
+```{r}
+SK_tests$Date <- mdy(SK_tests$Date)
+```
+
+```{r}
+SK_tests <-SK_tests%>%
+          filter(Date >= as.Date("2020-01-20") & Date <= as.Date("2020-04-20"))
+```
+
+
+```{r}
+SK_tests$population <- rep(51640000, nrow(SK_tests))
+```
+
+```{r}
+#We need to change those to 0's
+SK_tests$tests[is.na(SK_tests$tests)] <-0
+```
+
+
+```{r}
+SK_tests$tests <- as.numeric(SK_tests$tests)
+```
+
+```{r}
+SK_tests<- SK_tests %>%
+    mutate(per_100k = (tests / population)*100000)
+```
+
+
+
+
+```{r}
+View(SK_tests)
+```
+
+```{r}
+str(SK_tests)
+```
+
+
+
+
 
 
 
