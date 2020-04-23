@@ -158,11 +158,6 @@ US_tests<- US_tests %>%
     mutate(per_100k = (tests / population)*100000)
 ```
 
-```{r}
-# Let us reduce the decomal places
-#X<- US_tests
-    
-```
 
 ```{r}
 US_tests[ , 'per_100k']= round(US_tests[ , 'per_100k'] , 1)
@@ -261,7 +256,35 @@ SK_tests<- SK_tests %>%
     mutate(per_100k = (tests / population)*100000)
 ```
 
+```{r}
+SK_tests[ , 'per_100k']= round(SK_tests[ , 'per_100k'] , 1)
+```
 
+
+############33 NOW JOIN US & SK TESTS  ####################
+```{r}
+TESTS<- bind_rows(US_tests , SK_tests)
+```
+
+
+```{r}
+X <- TESTS %>%
+      pivot_longer(c(Date, per_100k) , 
+                   names_to = "status", values_to = "value")
+X
+```
+
+```{r}
+?pivot_longer
+```
+
+```{r}
+View(TESTS)
+```
+
+```{r}
+str(TESTS)
+```
 
 
 ```{r}
@@ -273,9 +296,23 @@ str(SK_tests)
 ```
 
 
+#https://www.storybench.org/pivoting-data-from-columns-to-rows-and-back-in-the-tidyverse/
+
+```{r}
+X<- TESTS%>%
+    
+```
 
 
 
+#################### PLOT TESTS ####################
+
+```{r}
+
+ggplot(TESTS,aes( x=Date, y= per_100k))+
+geom_line()
+  
+```
 
 
 
