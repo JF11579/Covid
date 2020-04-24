@@ -374,10 +374,77 @@ US_Deaths <- US_Deaths%>%
           filter(Date >= as.Date("2020-01-20") & Date <= as.Date("2020-04-20"))
 ```
 
+
 ```{r}
-#US_Deaths[ , 'per_100k']= round(US_Deaths[ , 'per_100k'] , 1)
+B<- US_Deaths  %>%
+    mutate(month = format(Date, "%m"))  %>%
+                          group_by(month)  %>%
+                            summarise(total = sum(per_100k))
 ```
 
+```{r}
+B
+```
+
+
+
+```{r}
+B$month<- as.numeric(B$month)
+```
+
+```{r}
+US_Deaths_monthly <- B %>% mutate(MonthName = month.name[month])
+```
+
+```{r}
+str(US_Deaths_monthly)
+```
+
+```{r}
+#US_Deaths_monthly$MonthName<- as.numeric(US_Deaths_monthly$MonthName)
+```
+
+```{r}
+US_Deaths_monthly
+
+```
+
+```{r}
+US_Deaths_monthly
+```
+
+
+
+```{r}
+ggplot(US_Deaths_monthly,aes(x= MonthName, y= total))+
+  geom_bar(stat = "identity")
+```
+
+```{r}
+US_Deaths_monthly$MonthName<- factor(US_Deaths_monthly$MonthName, levels = c("January", "February","March","April",
+                                                                             "May","June", "July","August","September",
+                                                                             "October", "November","December"))
+```
+
+
+```{r}
+ggplot(US_Deaths_monthly ,aes(x= MonthName, y= total))+
+  geom_col()
+```
+
+
+
+
+```{r}
+A<- US_Deaths%>% 
+    group_by(month=floor_date(Date,"30 days"))%>%
+    summarize(per_100k = sum(per_100k))
+A
+```
+
+```{r}
+A
+```
 
 
 
@@ -389,6 +456,8 @@ View(US_Deaths)
 ```{r}
 str(US_Deaths)
 ```
+
+
 
 
 ############### Now South Korean Deaths #############
@@ -411,13 +480,6 @@ SK_Deaths<- filter(covid_deaths,Code == "KOR")
 ```
 
 
-            
-```{r}
-SK_Deaths<- SK_Deaths %>%
-            rename(Country = SK_Deaths$Entity)
-```
-
-
 
 ```{r}
 SK_Deaths<- SK_Deaths %>%
@@ -425,12 +487,13 @@ SK_Deaths<- SK_Deaths %>%
 ```
 
 ```{r}
-SK_Deaths$Country <- as.factor(SK_Deaths$Country)
+SK_Deaths$Date <- mdy(SK_Deaths$Date)
 ```
 
 ```{r}
-SK_Deaths$Date<- mdy(SK_Deaths$Date)
+SK_Deaths$Country <- as.factor(SK_Deaths$Country)
 ```
+
 
 ```{r}
 SK_Deaths <-SK_Deaths%>%
@@ -449,12 +512,6 @@ SK_Deaths<- SK_Deaths %>%
 
 
 ```{r}
-#SK_Deaths[ , 'per_100k']= round(SK_Deaths[ , 'per_100k'] , 4)
-```
-
-
-
-```{r}
 View(SK_Deaths)
 ```
 
@@ -462,284 +519,81 @@ View(SK_Deaths)
 str(SK_Deaths)
 ```
 
+US_SK_Deaths_Wide
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-##########################################################################################
-##############################################################################################
-##################################   Garbage Below ###########################################
-#########################################################################################
-
-
-
-
-
-```{r}
-#Change col names
-#rename(new name = existing)
-US_deaths<- US_deaths %>%
-            rename(Country = Entity ,Deaths = `Daily confirmed deaths (deaths)`)
-```
-
-```{r}
-head(US_deaths)
-```
-
-```{r}
-US_deaths$Country<- as.factor(US_deaths$Country)
+theme(axis.text.x = element_text(angle = 45, vjust = 0.75,hjust = 0.9))+
+```{r  figl, fig.height=8, fig.width=4}
+ggplot(SK_Deaths,aes(x= Date, y= SK_Deaths$per_100k, group =1))+
+  geom_line()+
+  coord_flip()
 ```
 
-```{r}
-#Convert to date type.convert()
-#US_SK_tests$Date<- mdy(US_SK_tests$Date)
-US_deaths$Date <- mdy(US_deaths$Date)
-```
 
 
-```{r}
-US_deaths$Deaths<- as.numeric(US_deaths$Deaths)
-```
+#####################################
+# JOIN US & SK Deaths into wide
 
 ```{r}
-str(US_deaths)
+dim(US_Deaths)  #92  6
 ```
-
 ```{r}
-head(US_deaths)
+dim(SK_Deaths)  #113   6
 ```
 
 
 ```{r}
-#next group by month
-US_deaths<-US_deaths %>%
-    group_by(month=floor_date(Date,"month")) %>%
-    summarise(tot_deaths=sum(Deaths))
-US_deaths
+US_SK_Deaths_Wide<- bind_cols(US_Deaths, SK_Deaths)
 ```
 
 
 ```{r}
- head(US_deaths)
+US_SK_Deaths_Narrow<- bind_rows(US_Deaths, SK_Deaths)
 ```
 
 ```{r}
-#Add country data back in
-#X$x1<- 'SouthKorea'
-US_deaths$Country <- "USA"
-
-
+View(US_SK_Deaths_Wide)
 ```
 
 ```{r}
-head(US_deaths)
+View(US_SK_Deaths_Narrow)
 ```
-
-#Next SK deaths
 
-
 ```{r}
-#Change col names
-#rename(new name = existing)
-#US_deaths<- US_deaths %>%
-            #rename(Country = Entity ,Deaths = `Daily confirmed deaths (deaths)`)
-SK_deaths<-SK_deaths %>%
-            rename(Country= Entity, Deaths = `Daily confirmed deaths (deaths)`)
+ggplot(US_SK_Deaths_Wide,aes(x=Date))+
+  geom_line(aes(y=per_100k) , color = "red") +
+  geom_line(aes(y=per_100k1) , color = "blue") +
+  scale_colour_manual(values=c("red", "blue"))+
+  ggtitle("Deaths Per 100,000 US (red) and SKorea(Blue")
 ```
 
-```{r}
-SK_deaths$Country <- as.factor(SK_deaths$Country)
-```
 
 ```{r}
-#US_deaths$Date <- mdy(US_deaths$Date)
-SK_deaths$Date <- mdy(SK_deaths$Date)
+ggplot(US_SK_Deaths_Narrow, aes(x= Date, y= per_100k))+
+      geom_col(aes(color= "black" ), fill= "green", position = position_dodge(0.9) , width = 0.9) +
+      scale_color_manual(values = c("red", "blue"))+
+      scale_y_log10()
 ```
 
 
-```{r}
-head(SK_deaths,2)
-```
 
-```{r}
-#US_deaths<- filter(covid_deaths,Code == "USA")
-SK_deaths<- filter(covid_deaths,Entity =="South Korea")
-```
 
-```{r}
-head(SK_deaths)
-```
 
-X<- US_SK_deaths %>%
-    group_by(month=floor_date(Date,"month")) %>%
-    summarise(tot_deaths=sum(deaths))
-```{r}
-#next get monthly sums
-SK_deaths<- SK_deaths %>%
-    group_by(month=floor_date(Date,"month")) %>%
-    summarise(tot_deaths=sum(Deaths))
-SK_deaths
-```
 
-```{r}
-#now restore country name
-#X$x1<- 'SouthKorea'
-SK_deaths$Country <- 'South Korea'
-```
 
-```{r}
-head(SK_deaths,2)
-```
 
-#Next rowbind the US & SK deaths
 ```{r}
-A<- rbind(US_deaths, SK_deaths)
+str(US_SK_Deaths_Narrow)
 ```
 
-# Now try bar plotting
-
 ```{r}
-B2<-  ggplot(A,
-            aes(x=month, y= tot_deaths, color = factor(Country)))+
-            geom_col(aes(color = Country, fill = Country), position = position_dodge(10), width = 1) +
-  ggtitle("Deaths")+
-  scale_y_log10()
-B2
+US_SK_Deaths_Wide %>%
+      pivot_longer(~Country ,)
 ```
- scale_y_continuous(breaks = c( 0,9000000,10000000,100000000,200000000,300000000))+
- 
-  theme(axis.title.x = element_blank(),
-          axis.title.y = element_blank())+
-theme( # remove the vertical grid lines
-           panel.grid.major.x = element_blank() ,
-           # explicitly set the horizontal lines (or they will disappear too)
-           panel.grid.major.y = element_line( size=.1, color="black" ) 
+
 ```{r}
-B3<-  ggplot(A,
-            aes(x=month, y= tot_deaths, color = factor(Country)))+
-            geom_col(aes(color = Country, fill = Country, width=20), position = position_dodge(20), width = 0.1) +
-  ggtitle("Deaths")+
-  scale_y_sqrt()+
-   scale_y_continuous(breaks = c( 100,200000,400000,600000))+
-  labs(x="", y="Deaths") +
-  theme_classic()
-  
-  
-B3
+View(US_SKD)
 ```
- 
-
-
-
-
-
-
-
-
 
 
 
@@ -751,73 +605,17 @@ B3
 
 
 
-#########3
-##############
-############
-```{r}
-SK_deaths<- filter(covid_deaths,Code == "KOR")
-```
-
-```{r}
-View(SK_deaths)
-```
-
-```{r}
-#now combine US_SK death data.
-#US_SK_deaths<- bind_rows(US_deaths, SK_deaths)
-```
-
-```{r}
-View(US_SK_deaths)
-```
-
-```{r}
-write_csv(US_SK_deaths,"US_SK_deaths.csv")
-```
-
-########## import cleaned up data ##########
 
-```{r}
-US_SK_tests<- read_csv("US_SK_tests.csv")
-```
-
-```{r}
-str(US_SK_tests)
-```
 
-```{r}
-US_SK_tests$Country<- as.factor(US_SK_tests$Country)
-```
 
 
 
-```{r}
-US_SK_tests$Date<- mdy(US_SK_tests$Date)
-```
 
-```{r}
-head(US_SK_tests)
-```
 
-```{r}
-B<- US_SK_tests%>%
-      group_by(Date, "month") %>%
-      mutate(total_test= cumsum(tests))
-B
-```
 
 
 
-######## Line Graph Tests
 
-```{r}
-L1<- ggplot(US_SK_tests,
-            aes(x=Date,y= tests, color= factor(Country)))+
-              geom_line()+
-  ggtitle("Tests")+
-  theme_classic()
-L1
-```
 
 
 
@@ -826,220 +624,54 @@ L1
 
 
 
-########### Bar Graph for Tests  ##################################
 
 
-```{r}
-# graph by month:
-ggplot(US_SK_deaths = log,
-  aes(Date, Deaths)) +
-  stat_summary(fun.y = sum, # adds up all observations for the month
-    geom = "bar") + # or "line"
-  scale_x_date(
-    labels = date_format("%Y-%m-%d"),
-    breaks = "1 month")
-```
 
-```{r}
-B1<- ggplot(US_SK_deaths,
-            aes(x=Date, y= deaths, color = factor(Country)))+
-            geom_col(aes(color=Country,fill=Country))+
-  ggtitle("Deaths")
-B1
-```
 
 
-############### junk ############
 
-```{r}
-(expenses <- data_frame(
-  date=seq(as.Date("2016-01-01"), as.Date("2016-12-31"), by=1),
-  amount=rgamma(length(date), shape = 2, scale = 20)))
-```
 
 
-```{r}
-expenses %>% group_by(month=floor_date(date, "month")) %>%
-   summarize(amount=sum(amount))
 
-```
 
 
-```{r}
-str(US_SK_deaths)
-```
 
-```{r}
-X<- US_SK_deaths %>%
-    group_by(month=floor_date(Date,"month")) %>%
-    summarise(tot_deaths=sum(deaths))
-X
-```
 
-```{r}
-X$x1<- 'SouthKorea'
-```
 
-```{r}
-head(X)
-```
-#example
-```{r}
-df1 <- data.frame(p=c(10,8,7,3,2,6,7,8),
-             v=c(100,300,150,400,450,250,150,400))
-```
 
-```{r}
-df2 <- data.frame(p=c(10,8,6,4), v=c(150,250,350,400))
-```
 
-```{r}
-plot1 <- qplot(df1$v, df1$p)
-plot1
-```
 
-```{r}
-plot2 <- qplot(df2$v, df2$p, geom="step")
-plot2
-```
 
-```{r}
-plot3 <- ggplot(df1, aes(v, p)) + geom_point()
-plot3
-```
-```{r}
-plot4 <- ggplot(df2, aes(v, p)) + geom_step()
-plot4
-```
 
-```{r}
-#df1 is the default dataset for all geoms
-(plot1 <- ggplot(df1, aes(v, p)) + 
-    geom_point() +
-    geom_step(data = df2)
-)
-```
 
-```{r}
-#No default; data explicitly specified for each geom
-(plot2 <- ggplot(NULL, aes(v, p)) + 
-      geom_point(data = df1) +
-      geom_step(data = df2)
-)
-```
 
 
-#https://stackoverflow.com/questions/9109156/ggplot-combining-two-plots-from-different-data-frames
-```{r}
-ggplot() + 
-geom_line(data=df1, aes(x=A, y=B), color='green') + 
-geom_line(data=df2, aes(x=C, y=D), color='red')
-```
 
 
-```{r}
-Year <- c(2014, 2015, 2016)
-Response <- c(1000, 1100, 1200)
-Rate <- c(0.75, 0.42, 0.80)
-```
 
 
-```{r}
-df <- data.frame(Year, Response, Rate)
-df
-```
-```{r}
-ggplot(df)  + 
-    geom_bar(aes(x=Year, y=Response),stat="identity", fill="tan1", colour="sienna3")+
-    geom_line(aes(x=Year, y=Rate*max(df$Response)),stat="identity")+
-    geom_text(aes(label=Rate, x=Year, y=Rate*max(df$Response)), colour="black")+
-    geom_text(aes(label=Response, x=Year, y=0.95*Response), colour="black")+
-    scale_y_continuous(sec.axis = sec_axis(~./max(df$Response)))
-```
 
 
-```{r}
-test_data <-
-  data.frame(
-    var0 = 100 + c(0, cumsum(runif(49, -20, 20))),
-    var1 = 150 + c(0, cumsum(runif(49, -10, 10))),
-    date = seq(as.Date("2002-01-01"), by="1 month", length.out=100)
-  )
-```
 
 
-```{r}
-test_data
-```
 
 
-```{r}
-ggplot(test_data, aes(date)) + 
-  geom_line(aes(y = var0, colour = "var0")) + 
-  geom_line(aes(y = var1, colour = "var1"))
-```
 
 
 
-########  Wrangle US SK Death data  ##################
 
-'''
 
-      * rename columns
-      *drop extraneous columns
-      #concatenate 1st & 2nd columns
-      *change COUNTRY to factor
-      *change DATE to date-type
-      * filter out extraneous dates
-      *add column of population
-      * add column of deaths per 100k
-      * get monthly totatl of deaths
-      
-'''
 
-```{r}
-death_data<- read_csv("Covid_Deaths.csv")
-```
 
-```{r}
-# US Covid Deaths
-US_Deaths<- filter(death_data,Code == "USA")
-```
 
 
-```{r}
-            #rename(Country = Entity ,Deaths = `Daily confirmed deaths (deaths)`)
-US_Deaths<- US_Deaths %>%
-            rename(Country = Entity )
-```
 
-US_Deaths<- US_Deaths %>%
-            rename(Cases )
-            
-```{r}
-US_Deaths<-US_Deaths%>%
-            rename(Cases = `Daily confirmed cases (cases)`, Deaths = `Daily confirmed deaths (deaths)`)
-```
-            
 
-```{r}
-US_Deaths$Country <- as.factor(US_Deaths$Country)
-```
 
 
-```{r}
-US_Deaths$Date  <- mdy(US_Deaths$Date)
-```
 
 
- 
-```{r}
-View(US_Deaths)
-```
 
-```{r}
-str(US_Deaths)
-```
 
 
 
