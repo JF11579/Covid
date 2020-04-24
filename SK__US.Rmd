@@ -59,14 +59,16 @@ After all of that rbind US&SK back together , so where I had 4 now I have two da
       *change DATE to date-type
       * filter out extraneous dates
       *add column of population
-      * add column of testes per 100k
+      * add column of tests per 100k
       
 '''
 
 ```{r}
 data<- read_csv("covid_tests.csv")
 ```
-
+                   ######################
+##########################  US TESTS ##################3
+                   ########################
 # First Test Data
 ```{r}
 View(data)
@@ -175,9 +177,9 @@ First confirmation January 20, 2020
 ```{r}
 View(US_tests)
 ```
-
-################## Now SK tests ##################
-
+                                 #########################3
+                    ################## Now SK tests ##################
+                               ##############################
 
 ```{r}
 # First we will filter out the US test data 
@@ -261,22 +263,25 @@ SK_tests[ , 'per_100k']= round(SK_tests[ , 'per_100k'] , 1)
 ```
 
 
-############33 NOW JOIN US & SK TESTS  ####################
+                         #############################             
+               ############ NOW JOIN US & SK TESTS  ####################
+                         ##############################         
+               
+               
+               
 ```{r}
-TESTS<- bind_rows(US_tests , SK_tests)
+Tests_rbind<- bind_rows(US_tests , SK_tests)
+```
+
+```{r}
+inner<- inner_join(US_tests, SK_tests ,by= "Date")
 ```
 
 
 ```{r}
-X <- TESTS %>%
-      pivot_longer(c(Date, per_100k) , 
-                   names_to = "status", values_to = "value")
-X
+View(inner)
 ```
 
-```{r}
-?pivot_longer
-```
 
 ```{r}
 View(TESTS)
@@ -298,125 +303,125 @@ str(SK_tests)
 
 #https://www.storybench.org/pivoting-data-from-columns-to-rows-and-back-in-the-tidyverse/
 
-```{r}
-X<- TESTS%>%
-    
-```
+# NOTE pivot longer requires all data to be of same data type, cannot mix factors and numeric and data , etc
+
+
+
+
+
 
 
 
 #################### PLOT TESTS ####################
 
 ```{r}
-
-ggplot(TESTS,aes( x=Date, y= per_100k))+
-geom_line()
-  
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-###################################################################
-#################   Garbage Below #################################
-###################################################################
-
-```{r}
-dim(data)
-```
-
-```{r}
-str(data)
-```
-
-```{r}
+ggplot(inner, aes(Date)) +
+  geom_line(aes(y=per_100k.x) , color= "red")+
+  geom_line(aes(y=per_100k.y), color= "blue")
 ```
 
 
 ```{r}
-View(data)
+ggplot(inner, aes(Date)) +
+  geom_line(aes(y=per_100k.x,color=per_100k.x))+
+  geom_line(aes(y=per_100k.y, color=per_100k.y))
 ```
 
 
-
-```{r}
-US<- filter(data,Code == "States")
-```
-
-```{r}
-dim(US)
-```
-```{r}
-head(US)
-```
-
-
-```{r}
-#data_2<- bind_rows(US, SK)
-```
-
-```{r}
-#drop any irrelevant rows like Virgin Isles
-US_SK_tests<- data%>%
-      filter(Date %in% c("KOR", "USA"))
-```
-
-```{r}
-View(US_SK_tests)
-```
-
-
-```{r}
-write_csv(US_SK_tests, "US_SK_tests.csv")
-```
-
-```{r}
-str(data_3)
-```
-######################################################################
-######### Next repeat the proces with covid death stats ###############
+  ############################################################################################
+              #####    Now wrangle Us and SK death data                                  ######
+#################################################################################
+* rename columns
+      *Filter to get just the single country
+      *drop extraneous columns
+      *rename cols
+      #concatenate 1st & 2nd columns
+      *change COUNTRY to factor
+      *change DATE to date-type
+      * filter out extraneous dates
+      * add column of population
+      * add column of tests per 100k
 
 
 ```{r}
 covid_deaths<- read_csv("covid_daily_deaths.csv")
 ```
 
+
 ```{r}
 View(covid_deaths)
 ```
 
 ```{r}
-US_deaths<- filter(covid_deaths,Code == "USA")
+US_Deaths<- filter(covid_deaths,Code == "USA")
+```
+
+
+
+```{r}
+#Change col names
+#rename(new name = existing)
+US_Deaths<- US_deaths %>%
+            rename(Country = Entity ,Deaths = `Daily confirmed deaths (deaths)`)
 ```
 
 ```{r}
-View(US_deaths)
+US_Deaths$Country<- as.factor(US_Deaths$Country)
 ```
+
+
 ```{r}
-str(US_deaths)
+US_Deaths$Date <- mdy(US_Deaths$Date)
 ```
 
 ```{r}
-head(US_deaths,2)
+US_Deaths$Population <- rep(328200000, nrow(US_Deaths))
 ```
+
+SK_tests<- SK_tests %>%
+    mutate(per_100k = (tests / population)*100000)
+```{r}
+US_Deaths<- US_Deaths %>%
+          mutate(per_100k = (Deaths / Population)* 100000)
+```
+
+
+```{r}
+View(US_Deaths)
+```
+
+
+```{r}
+str(US_Deaths)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##########################################################################################
+##############################################################################################
+##################################   Garbage Below ###########################################
+#########################################################################################
+
+
+
 
 
 ```{r}
@@ -648,35 +653,6 @@ B
 
 
 
-```{r}
-US_SK_deaths<- read_csv("US_SK_deaths.csv")
-```
-
-```{r}
-US_SK_deaths$Country<- as.factor(US_SK_deaths$Country)
-```
-
-
-```{r}
-US_SK_deaths$Date<- mdy(US_SK_deaths$Date)
-```
-
-```{r}
-head(US_SK_deaths,3)
-```
-
-```{r}
-A<-US_SK_deaths_2<- US_SK_deaths %>%
-mutate(month = format(Date, "%m"), year = format(Date, "%Y")) %>%
-group_by(month, year) %>%
-summarise(total = sum(deaths))
-```
-
-```{r}
-A
-```
-
-
 ######## Line Graph Tests
 
 ```{r}
@@ -690,48 +666,12 @@ L1
 
 
 
-################ Layered Plots #####################
-
-```{r}
- ggplot(A,
-            aes(x=month, y= tot_deaths, color = factor(Country)))+
-            geom_col(aes(color = Country, fill = Country, width=20), position = position_dodge(20), width = 0.1) +
-  ggtitle("Deaths")+
-  scale_y_sqrt()+
-   scale_y_continuous(breaks = c( 100,200000,400000,600000))+
-  labs(x="", y="Deaths") +
-  theme_classic()+
-  geom_label()+
-  deom_line
-  
-  
-
-```
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-########### Bar Graph for Deaths
+########### Bar Graph for Tests  ##################################
 
 
 ```{r}
@@ -863,20 +803,88 @@ ggplot(df)  +
 ```
 
 
+```{r}
+test_data <-
+  data.frame(
+    var0 = 100 + c(0, cumsum(runif(49, -20, 20))),
+    var1 = 150 + c(0, cumsum(runif(49, -10, 10))),
+    date = seq(as.Date("2002-01-01"), by="1 month", length.out=100)
+  )
+```
+
+
+```{r}
+test_data
+```
+
+
+```{r}
+ggplot(test_data, aes(date)) + 
+  geom_line(aes(y = var0, colour = "var0")) + 
+  geom_line(aes(y = var1, colour = "var1"))
+```
 
 
 
+########  Wrangle US SK Death data  ##################
+
+'''
+
+      * rename columns
+      *drop extraneous columns
+      #concatenate 1st & 2nd columns
+      *change COUNTRY to factor
+      *change DATE to date-type
+      * filter out extraneous dates
+      *add column of population
+      * add column of deaths per 100k
+      * get monthly totatl of deaths
+      
+'''
+
+```{r}
+death_data<- read_csv("Covid_Deaths.csv")
+```
+
+```{r}
+# US Covid Deaths
+US_Deaths<- filter(death_data,Code == "USA")
+```
 
 
+```{r}
+            #rename(Country = Entity ,Deaths = `Daily confirmed deaths (deaths)`)
+US_Deaths<- US_Deaths %>%
+            rename(Country = Entity )
+```
+
+US_Deaths<- US_Deaths %>%
+            rename(Cases )
+            
+```{r}
+US_Deaths<-US_Deaths%>%
+            rename(Cases = `Daily confirmed cases (cases)`, Deaths = `Daily confirmed deaths (deaths)`)
+```
+            
+
+```{r}
+US_Deaths$Country <- as.factor(US_Deaths$Country)
+```
 
 
+```{r}
+US_Deaths$Date  <- mdy(US_Deaths$Date)
+```
 
 
+ 
+```{r}
+View(US_Deaths)
+```
 
-
-
-
-
+```{r}
+str(US_Deaths)
+```
 
 
 
