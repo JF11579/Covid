@@ -263,6 +263,16 @@ SK_tests[ , 'per_100k']= round(SK_tests[ , 'per_100k'] , 1)
 ```
 
 
+```{r}
+View(SK_tests)
+```
+
+```{r}
+str(SK_tests)
+```
+
+
+
                          #############################             
                ############ NOW JOIN US & SK TESTS  ####################
                          ##############################         
@@ -278,35 +288,10 @@ inner<- inner_join(US_tests, SK_tests ,by= "Date")
 ```
 
 
-```{r}
-View(inner)
-```
-
-
-```{r}
-View(TESTS)
-```
-
-```{r}
-str(TESTS)
-```
-
-
-```{r}
-View(SK_tests)
-```
-
-```{r}
-str(SK_tests)
-```
-
 
 #https://www.storybench.org/pivoting-data-from-columns-to-rows-and-back-in-the-tidyverse/
 
 # NOTE pivot longer requires all data to be of same data type, cannot mix factors and numeric and data , etc
-
-
-
 
 
 
@@ -396,6 +381,49 @@ str(US_Deaths)
 ```
 
 
+############### Now South Korean Deaths #############
+
+* rename columns
+      *Filter to get just the single country
+      *drop extraneous columns
+      *rename cols
+      #concatenate 1st & 2nd columns
+      *change COUNTRY to factor
+      *change DATE to date-type
+      * filter out extraneous dates
+      * add column of population
+      * add column of tests per 100k
+      
+
+US_Deaths<- filter(covid_deaths,Code == "USA")
+```{r}
+SK_Deaths<- filter(covid_deaths,Code == "KOR")
+```
+
+US_Deaths<- US_deaths %>%
+            rename(Country = Entity ,Deaths = `Daily confirmed deaths (deaths)`)
+            
+```{r}
+SK_Deaths<- SK_Deaths %>%
+            rename(Country = SK_Deaths$Entity)
+```
+
+
+
+```{r}
+SK_Deaths<- SK_Deaths %>%
+            rename(Country = Entity ,Deaths = `Daily confirmed deaths (deaths)`)
+```
+
+
+
+```{r}
+View(SK_Deaths)
+```
+
+```{r}
+str(SK_Deaths)
+```
 
 
 
