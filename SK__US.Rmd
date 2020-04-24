@@ -363,12 +363,22 @@ US_Deaths$Date <- mdy(US_Deaths$Date)
 US_Deaths$Population <- rep(328200000, nrow(US_Deaths))
 ```
 
-SK_tests<- SK_tests %>%
-    mutate(per_100k = (tests / population)*100000)
+
 ```{r}
 US_Deaths<- US_Deaths %>%
           mutate(per_100k = (Deaths / Population)* 100000)
 ```
+
+```{r}
+US_Deaths <- US_Deaths%>%
+          filter(Date >= as.Date("2020-01-20") & Date <= as.Date("2020-04-20"))
+```
+
+```{r}
+#US_Deaths[ , 'per_100k']= round(US_Deaths[ , 'per_100k'] , 1)
+```
+
+
 
 
 ```{r}
@@ -395,13 +405,12 @@ str(US_Deaths)
       * add column of tests per 100k
       
 
-US_Deaths<- filter(covid_deaths,Code == "USA")
+
 ```{r}
 SK_Deaths<- filter(covid_deaths,Code == "KOR")
 ```
 
-US_Deaths<- US_deaths %>%
-            rename(Country = Entity ,Deaths = `Daily confirmed deaths (deaths)`)
+
             
 ```{r}
 SK_Deaths<- SK_Deaths %>%
@@ -415,6 +424,34 @@ SK_Deaths<- SK_Deaths %>%
             rename(Country = Entity ,Deaths = `Daily confirmed deaths (deaths)`)
 ```
 
+```{r}
+SK_Deaths$Country <- as.factor(SK_Deaths$Country)
+```
+
+```{r}
+SK_Deaths$Date<- mdy(SK_Deaths$Date)
+```
+
+```{r}
+SK_Deaths <-SK_Deaths%>%
+          filter(Date >= as.Date("2020-01-20") & Date <= as.Date("2020-04-20"))
+```
+
+
+```{r}
+SK_Deaths$population <- rep(51640000, nrow(SK_Deaths))
+```
+
+```{r}
+SK_Deaths<- SK_Deaths %>%
+    mutate(per_100k = (Deaths / population)*100000)
+```
+
+
+```{r}
+#SK_Deaths[ , 'per_100k']= round(SK_Deaths[ , 'per_100k'] , 4)
+```
+
 
 
 ```{r}
@@ -424,6 +461,96 @@ View(SK_Deaths)
 ```{r}
 str(SK_Deaths)
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
